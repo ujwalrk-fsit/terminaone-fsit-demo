@@ -17,7 +17,7 @@ export function BankPanel({ bank, indicationId, onConfirmed }: { bank?: BankDeta
         <dt style={dt}>Account</dt><dd style={{ margin: 0 }}>{bank.accountName} ({masked})</dd>
         <dt style={dt}>Routing</dt><dd style={{ margin: 0 }}>{bank.routingCode}</dd>
         {bank.swift && <><dt style={dt}>SWIFT</dt><dd style={{ margin: 0 }}>{bank.swift}</dd></>}
-        <dt style={dt}>Reference</dt><dd style={{ margin: 0, fontFamily: 'monospace' }}>REF-{indicationId}</dd>
+        <dt style={dt}>Reference</dt><dd style={{ margin: 0, fontFamily: 'var(--font-mono)' }}>REF-{indicationId}</dd>
       </dl>
       <p style={{ margin: 0, color: 'var(--text-muted)' }}>{bank.instructions}</p>
       <label style={{ display: 'block' }}>Transfer proof

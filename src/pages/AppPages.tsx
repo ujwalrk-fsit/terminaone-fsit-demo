@@ -8,7 +8,7 @@ import { dataActivity } from '../data/sample';
 import { actorName } from '../dataRoom';
 import { Card, Empty } from '../components/Shell';
 import { SignPad } from '../components/BankSign';
-import { SortTh, useSort } from '../components/Tables';
+import { SortTh, Toolbar, Pager, useSort, usePagination } from '../components/Tables';
 import { useTheme, toggleTheme } from '../theme';
 
 const input = { padding: '8px 10px', width: '100%' } as const;
@@ -77,7 +77,7 @@ export function Documents() {
       <h2 className="page-h" style={{ fontSize: 17 }}>Signing inbox <span className="sub">(investor → advisor → fund manager)</span></h2>
       {sigs.length === 0 ? <Empty text="No signature requests." /> : sigs.map((s) => (
         <Card key={s._id}>
-          <div style={{ fontFamily: 'monospace', fontSize: 12 }}>{s._id} · <b style={{ color: 'var(--text-strong)' }}>{s.status}</b> · {s.stage} · order {s.currentOrder} · expires {s.expiresAt}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{s._id} · <b style={{ color: 'var(--text-strong)' }}>{s.status}</b> · {s.stage} · order {s.currentOrder} · expires {s.expiresAt}</div>
           <div style={{ marginTop: 4, fontSize: 12, color: 'var(--text-muted)' }}>{s.recipients.map((r) => `${r.role}#${r.order}:${r.status}`).join(' → ')}</div>
           {s.status !== 'COMPLETED' ? (
             <>
@@ -102,37 +102,45 @@ export function Documents() {
 
 export function Transfers() {
   const transfers = useColl<Transfer>('transfers');
+  const [tq, setTq] = useState('');
   const tGet = (t: Transfer, k: string): string | number =>
     k === 'date' ? t.createdAt : k === 'amount' ? t.totalAmount : k === 'status' ? t.status : t.reference;
-  const [sorted, sk, dir, sort] = useSort(transfers, 'date', -1, tGet);
+  const q = tq.trim().toLowerCase();
+  const filtered = transfers.filter((t) => !q || t.reference.toLowerCase().includes(q) || t.status.toLowerCase().includes(q));
+  const [sorted, sk, dir, sort] = useSort(filtered, 'date', -1, tGet);
+  const [paged, page, pages, setPage, total] = usePagination(sorted, 8);
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <div className="section-head" style={{ margin: 0 }}><h2>Transfers</h2><span className="pill pill-neutral">{transfers.length}</span></div>
-      {sorted.length === 0 ? <Empty text="No transfers yet. Transfers appear here after you confirm a bank payment." /> : (
-        <div className="dtable">
-          <table className="grid" style={{ minWidth: 640 }}>
-            <thead><tr>
-              <th>Reference</th>
-              <SortTh label="Date" k="date" sk={sk} dir={dir} onSort={sort} />
-              <SortTh label="Amount" k="amount" sk={sk} dir={dir} onSort={sort} />
-              <th>Method</th>
-              <SortTh label="Status" k="status" sk={sk} dir={dir} onSort={sort} />
-              <th>Indication</th>
-            </tr></thead>
-            <tbody>
-              {sorted.map((t) => (
-                <tr key={t._id}>
-                  <td style={{ fontFamily: 'monospace' }}>{t.reference}</td>
-                  <td className="tnum">{t.createdAt}</td>
-                  <td className="tnum"><b>${t.totalAmount.toLocaleString()}</b> {t.currency}</td>
-                  <td>{t.method}</td>
-                  <td><span className={`pill ${t.status === 'SUCCEEDED' ? 'pill-live' : t.status === 'FAILED' ? 'pill-neutral' : 'pill-info'}`}>{t.status}</span></td>
-                  <td style={{ fontFamily: 'monospace', fontSize: 11 }}>{t.indicationId}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <Toolbar search={tq} onSearch={(s) => { setTq(s); setPage(0); }} placeholder="Search reference or status…" />
+      {sorted.length === 0 ? <Empty text="No transfers found." hint="Transfers appear here after you confirm a bank payment." /> : (
+        <>
+          <div className="dtable tall">
+            <table className="grid" style={{ minWidth: 640 }}>
+              <thead><tr>
+                <th>Reference</th>
+                <SortTh label="Date" k="date" sk={sk} dir={dir} onSort={sort} />
+                <SortTh label="Amount" k="amount" sk={sk} dir={dir} onSort={sort} />
+                <th>Method</th>
+                <SortTh label="Status" k="status" sk={sk} dir={dir} onSort={sort} />
+                <th>Indication</th>
+              </tr></thead>
+              <tbody>
+                {paged.map((t) => (
+                  <tr key={t._id}>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{t.reference}</td>
+                    <td className="tnum">{t.createdAt}</td>
+                    <td className="tnum"><b>${t.totalAmount.toLocaleString()}</b> {t.currency}</td>
+                    <td>{t.method}</td>
+                    <td><span className={`pill ${t.status === 'SUCCEEDED' ? 'pill-live' : t.status === 'FAILED' ? 'pill-neutral' : 'pill-info'}`}>{t.status}</span></td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{t.indicationId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pager page={page} pages={pages} total={total} onPage={setPage} />
+        </>
       )}
       <div style={{ fontSize: 12 }}>
         <Link to="/indications/new" className="link-more">New bank transfer</Link>

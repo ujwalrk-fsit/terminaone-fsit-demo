@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Bell, Building2, LayoutGrid, Star, Landmark, FolderOpen,
+  Bell, Building2, Inbox, LayoutGrid, Star, Landmark, FolderOpen,
   Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
   Moon, ShieldCheck, LogOut,
 } from 'lucide-react';
@@ -149,8 +149,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
 export const Card = ({ children }: { children: React.ReactNode }) => (
   <div className="card">{children}</div>
 );
-export const Empty = ({ text }: { text: string }) => (
-  <div style={{ border: '1px dashed var(--border-default)', borderRadius: 10, padding: 18, textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>{text}</div>
+export const Empty = ({ text, hint }: { text: string; hint?: string }) => (
+  <div style={{ border: '1px dashed var(--border-default)', borderRadius: 12, padding: '28px 20px', textAlign: 'center', background: 'var(--surface-1)' }}>
+    <Inbox size={22} style={{ color: 'var(--text-subtle)' }} />
+    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-strong)', marginTop: 8 }}>{text}</div>
+    {hint && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{hint}</div>}
+  </div>
 );
 export const Err = ({ text, onRetry }: { text: string; onRetry?: () => void }) => (
   <div style={{ border: '1px solid var(--danger)', background: 'var(--warn-bg)', borderRadius: 8, padding: 12, fontSize: 12 }}>Error: {text} {onRetry && <button style={{ textDecoration: 'underline' }} onClick={onRetry}>Retry</button>}</div>

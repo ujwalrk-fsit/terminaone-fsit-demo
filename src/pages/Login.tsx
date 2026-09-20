@@ -32,14 +32,6 @@ export function BrandPanel() {
         <span className="ic"><SlidersHorizontal size={16} /></span>
         <span><b>Invest your way</b><small>Build your own portfolio — or let our automated investing solution handle everything for you.</small></span>
       </div>
-      <svg className="auth-arch" viewBox="0 0 420 150" aria-hidden="true" style={{ width: '100%', height: 150 }}>
-        <g fill="none" stroke="#a9c3ec" strokeWidth="3" opacity=".85">
-          <path d="M10 150 A 70 70 0 0 1 150 150" />
-          <path d="M120 150 A 55 90 0 0 1 230 150" />
-          <path d="M210 150 A 60 120 0 0 1 330 150" />
-          <path d="M280 150 A 80 80 0 0 1 440 150" />
-        </g>
-      </svg>
     </div>
   );
 }

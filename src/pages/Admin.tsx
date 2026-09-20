@@ -5,6 +5,7 @@ import { useColl, upsert, remove } from '../db';
 import type { AppUser, FundOffering, FundStatus, Indication, Article, Opportunity, RoleGroup } from '../types';
 import { logs } from '../data/sample';
 import { fmtMoney } from '../components/OppCard';
+import { Pager, usePagination } from '../components/Tables';
 import { Card, Empty } from '../components/Shell';
 
 function Denied() { return <Empty text="403 — admin, fund_manager or monitor only." />; }
@@ -65,12 +66,13 @@ const ROLES: RoleGroup[] = ['admin', 'advisor', 'affiliate', 'fund_manager', 'mo
 function UserManager({ me }: { me: string }) {
   const users = useColl<AppUser>('users');
   const [form, setForm] = useState({ firstName: '', lastName: '', emailId: '', roleGroup: 'investor' as RoleGroup, password: 'welcome123' });
+  const [upaged, upage, upages, usetPage, utotal] = usePagination(users, 8);
   return (
     <div style={{ display: 'grid', gap: 8 }}>
       <div className="dtable">
         <table className="grid"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th /></tr></thead>
           <tbody>
-            {users.map((u) => (
+            {upaged.map((u) => (
               <tr key={u._id}>
                 <td><b style={{ color: 'var(--text-strong)' }}>{u.firstName} {u.lastName}</b></td>
                 <td>{u.emailId}</td>
@@ -90,6 +92,7 @@ function UserManager({ me }: { me: string }) {
             ))}
           </tbody></table>
       </div>
+      <Pager page={upage} pages={upages} total={utotal} onPage={usetPage} />
       <Card>
         <H>Add user</H>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8 }}>
@@ -287,6 +290,7 @@ export default function Admin() {
   const [cmsTab, setCmsTab] = useState<'articles' | 'opportunities'>('articles');
   const [editFund, setEditFund] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [logPaged, logPage, logPages, logSetPage, logTotal] = usePagination(logs, 10);
   if (!(role === 'admin' || role === 'fund_manager' || role === 'monitor')) return <Denied />;
   const ro = role === 'monitor';
   return (
@@ -347,10 +351,11 @@ export default function Admin() {
 
       {tab === 'logs' && (
         <div>
-          <div className="dtable">
+          <div className="dtable tall">
             <table className="grid"><thead><tr><th>Module</th><th>Action</th><th>By</th><th>At</th></tr></thead>
-              <tbody>{logs.map((l) => <tr key={l._id}><td>{l.module}</td><td>{l.action}</td><td style={{ fontFamily: 'monospace' }}>{l.performedBy}</td><td>{l.createdAt}</td></tr>)}</tbody></table>
+              <tbody>{logPaged.map((l) => <tr key={l._id}><td>{l.module}</td><td>{l.action}</td><td style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{l.performedBy}</td><td>{l.createdAt}</td></tr>)}</tbody></table>
           </div>
+          <Pager page={logPage} pages={logPages} total={logTotal} onPage={logSetPage} />
           <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-subtle)' }}>Audit trail retained for 3 years.</div>
         </div>
       )}

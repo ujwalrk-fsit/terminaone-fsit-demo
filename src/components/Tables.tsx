@@ -69,8 +69,48 @@ export function ExpandBtn({ open, onClick, label }: { open: boolean; onClick: ()
   );
 }
 
+export function usePagination<T>(rows: T[], size = 8): [T[], number, number, (p: number) => void, number] {
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(rows.length / size));
+  const safe = Math.min(page, pages - 1);
+  const slice = useMemo(() => rows.slice(safe * size, safe * size + size), [rows, safe, size]);
+  return [slice, safe, pages, (p: number) => setPage(Math.max(0, Math.min(p, pages - 1))), rows.length];
+}
+
+export function Pager({ page, pages, total, onPage }: { page: number; pages: number; total: number; onPage: (p: number) => void }) {
+  return (
+    <div className="pager">
+      <span>{total} row{total === 1 ? '' : 's'}</span>
+      {pages > 1 && (
+        <>
+          <button className="chip" disabled={page === 0} onClick={() => onPage(page - 1)}>← Prev</button>
+          <span className="tnum">Page {page + 1} of {pages}</span>
+          <button className="chip" disabled={page >= pages - 1} onClick={() => onPage(page + 1)}>Next →</button>
+        </>
+      )}
+    </div>
+  );
+}
+
+export function Toolbar({ search, onSearch, placeholder, children, onExport }: {
+  search: string; onSearch: (s: string) => void; placeholder?: string;
+  children?: React.ReactNode; onExport?: () => void;
+}) {
+  return (
+    <div className="tbar">
+      <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder={placeholder ?? 'Search…'} aria-label="Search table"
+        style={{ height: 34, padding: '0 12px', width: 240 }} />
+      {children}
+      {onExport && (
+        <button className="btn btn-ghost" style={{ marginLeft: 'auto' }} onClick={onExport}>Export CSV</button>
+      )}
+    </div>
+  );
+}
+
 export function toCsv(name: string, header: string[], rows: (string | number)[][]) {
-  const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  const q = String.fromCharCode(34);
+  const esc = (v: string | number) => q + String(v).split(q).join(q + q) + q;
   const blob = new Blob([[header.map(esc).join(','), ...rows.map((r) => r.map(esc).join(','))].join('\n')], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

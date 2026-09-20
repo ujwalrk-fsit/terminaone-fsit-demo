@@ -8,7 +8,7 @@ import type { Indication, FundOffering, Opportunity, InvestorAccount } from '../
 import { priceSeries } from '../data/company';
 import { Card, Empty } from '../components/Shell';
 import { BankPanel, SignPad } from '../components/BankSign';
-import { Avatar, ExpandBtn, SortTh, TableTabs, toCsv, useSort } from '../components/Tables';
+import { Avatar, ExpandBtn, SortTh, TableTabs, Pager, Toolbar, toCsv, usePagination, useSort } from '../components/Tables';
 import { actorName } from '../dataRoom';
 
 export function fmtCompact(n: number) {
@@ -28,12 +28,19 @@ export function Indications() {
   const funds = useColl<FundOffering>('funds');
   const opportunities = useColl<Opportunity>('opportunities');
   const [scope, setScope] = useState('Mine');
+  const [tq, setTq] = useState('');
   const [open, setOpen] = useState<string | null>(null);
   const [editUnits, setEditUnits] = useState<Record<string, number>>({});
 
   const mine = rows.filter((i) => !auth.user || auth.user.roleGroup !== 'investor' || i.investorUserId === auth.user.sub);
   const shown = scope === 'Mine' && auth.user ? mine.filter((i) => i.investorUserId === auth.user!.sub) : mine;
-  const live = shown.filter((i) => !['REJECTED', 'ALLOCATED'].includes(i.status));
+  const oppOf = (i: Indication) => opportunities.find((x) => x._id === i.opportunityId) ?? opportunities.find((x) => x.fundId === i.fundId);
+  const q = tq.trim().toLowerCase();
+  const live = shown.filter((i) => !['REJECTED', 'ALLOCATED'].includes(i.status)).filter((i) => {
+    if (!q) return true;
+    const o = oppOf(i);
+    return (o?.name ?? '').toLowerCase().includes(q) || i.status.toLowerCase().includes(q) || i._id.toLowerCase().includes(q);
+  });
   const buys = live.length;
   const get = (i: Indication, k: string): string | number => {
     const o = opportunities.find((x) => x._id === i.opportunityId) ?? opportunities.find((x) => x.fundId === i.fundId);
@@ -51,7 +58,7 @@ export function Indications() {
     }
   };
   const [sorted, sk, dir, sort] = useSort(live, 'updated', -1, get);
-  const oppOf = (i: Indication) => opportunities.find((x) => x._id === i.opportunityId) ?? opportunities.find((x) => x.fundId === i.fundId);
+  const [paged, page, pages, setPage, total] = usePagination(sorted, 8);
 
   const csv = () => toCsv('iois.csv',
     ['Company', 'Submitted By', 'Type', 'Price', 'Quantity', 'Size', 'TSG Price', 'Created', 'Updated', 'Status'],
@@ -76,11 +83,13 @@ export function Indications() {
         <div className="stat3"><small>Sells</small><b>0</b></div>
       </div>
 
-      <TableTabs tabs={['Mine', 'All']} active={scope} onChange={setScope} />
+      <TableTabs tabs={['Mine', 'All']} active={scope} onChange={(t) => { setScope(t); setPage(0); }} />
+      <Toolbar search={tq} onSearch={(s) => { setTq(s); setPage(0); }} placeholder="Search company, status or ID…" onExport={csv} />
 
-      {sorted.length === 0 ? <Empty text="No open IOIs. Create one to get started." /> : (
-        <div className="dtable">
-          <table className="grid" style={{ minWidth: 1080 }}>
+      {sorted.length === 0 ? <Empty text="No open IOIs." hint="Create one to get started, or clear the search." /> : (
+        <div>
+          <div className="dtable tall">
+            <table className="grid" style={{ minWidth: 1080 }}>
             <thead><tr>
               <SortTh label="Company" k="company" sk={sk} dir={dir} onSort={sort} />
               <SortTh label="Submitted By" k="by" sk={sk} dir={dir} onSort={sort} />
@@ -95,7 +104,7 @@ export function Indications() {
               <th>Actions</th><th />
             </tr></thead>
             <tbody>
-              {sorted.map((i) => {
+              {paged.map((i) => {
                 const o = oppOf(i);
                 const f = funds.find((x) => x._id === i.fundId);
                 const px = i.numberOfUnits > 0 ? i.investmentAmount / i.numberOfUnits : 0;
@@ -154,6 +163,8 @@ export function Indications() {
               })}
             </tbody>
           </table>
+        </div>
+        <Pager page={page} pages={pages} total={total} onPage={setPage} />
         </div>
       )}
       <div>

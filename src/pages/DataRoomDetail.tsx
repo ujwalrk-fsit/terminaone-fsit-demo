@@ -6,6 +6,7 @@ import type { RootState } from '../store';
 import { useColl, upsert } from '../db';
 import type { DataFile, DataFileType, DataFolder, FundOffering } from '../types';
 import { FOLDERS, canView, fmtSize, fundName, latest, roomActivity, actorName } from '../dataRoom';
+import { Pager, usePagination } from '../components/Tables';
 import { StatusPill } from '../components/OppCard';
 import { Card, Empty } from '../components/Shell';
 
@@ -52,6 +53,7 @@ export default function DataRoomDetail() {
     (folder === 'All' || f.folder === folder) &&
     (!status || f.status === status) &&
     (!q || f.title.toLowerCase().includes(q.toLowerCase())));
+  const [paged, page, pages, setPage, total] = usePagination(list, 8);
   const selected = files.find((f) => f._id === sel);
   const acts = [...sessionActs.map((s, i) => ({ _id: `sess_${i}`, fundId, actor: 'you', action: s.action, target: s.target, createdAt: s.createdAt })), ...roomActivity(fundId)];
 
@@ -129,11 +131,12 @@ export default function DataRoomDetail() {
           </div>
 
           {list.length === 0 ? <Empty text="No documents match." /> : (
-            <div className="dtable">
+            <>
+            <div className="dtable tall">
               <table className="grid" style={{ minWidth: 780 }}>
                 <thead><tr><th>Document</th><th>Ver</th><th>Size</th><th>Updated</th><th>Status</th><th>Access</th><th /></tr></thead>
                 <tbody>
-                  {list.map((f) => {
+                  {paged.map((f) => {
                     const ok = canView(f, role);
                     const lv = latest(f);
                     return (
@@ -166,6 +169,8 @@ export default function DataRoomDetail() {
                 </tbody>
               </table>
             </div>
+            <Pager page={page} pages={pages} total={total} onPage={setPage} />
+            </>
           )}
 
           {selected && (

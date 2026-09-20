@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight, Info } from 'lucide-react';
-import { SortTh, useSort } from '../components/Tables';
+import { SortTh, useSort, Pager, usePagination } from '../components/Tables';
 import type { RootState } from '../store';
 import { useColl } from '../db';
 import type { FundOffering, Indication, InvestorAccount, Opportunity, Transfer } from '../types';
@@ -42,6 +42,7 @@ export default function Dashboard() {
     return '';
   };
   const [wsorted, wsk, wdir, wsort] = useSort(wrows, 'price', -1, wGet);
+  const [wpaged, wpage, wpages, wsetPage, wtotal] = usePagination(wsorted, 8);
   const queue = indications.filter((i) => ['AWAITING_APPROVAL', 'AWAITING_SIGNATURE', 'SUBSCRIBED', 'PAYMENT_PROCESSING'].includes(i.status));
   const txns = transfers.slice(0, 4);
   const oppOf = (i: Indication) => opportunities.find((o) => o._id === i.opportunityId) ?? opportunities.find((o) => o.fundId === i.fundId);
@@ -181,8 +182,9 @@ export default function Dashboard() {
           <b style={{ color: 'var(--text-strong)', fontSize: 14 }}>Watchlists</b>
           <Link to="/watchlist" className="btn btn-ghost" style={{ marginLeft: 'auto' }}>Manage</Link>
         </div>
-        {watched.length === 0 ? <Empty text="Your watchlist is empty. Add companies from any opportunity page." /> : (
-          <div style={{ overflowX: 'auto', marginTop: 6 }} className="dtable">
+        {watched.length === 0 ? <Empty text="Your watchlist is empty." hint="Add companies from any opportunity page." /> : (
+          <>
+            <div style={{ overflowX: 'auto', marginTop: 6 }} className="dtable tall">
             <table className="grid compact-table" style={{ minWidth: 860 }}>
               <thead><tr>
                 <SortTh label="Company" k="company" sk={wsk} dir={wdir} onSort={wsort} />
@@ -195,7 +197,7 @@ export default function Dashboard() {
                 <th>Actions</th>
               </tr></thead>
               <tbody>
-                {wsorted.map(({ o, high, ask, lfr, w }) => {
+                {wpaged.map(({ o, high, ask, lfr, w }) => {
                   const vsLfr = lfr && o.tsgPrice ? ((o.tsgPrice - lfr) / lfr) * 100 : null;
                   return (
                     <tr key={o._id}>
@@ -216,6 +218,8 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
+          <Pager page={wpage} pages={wpages} total={wtotal} onPage={wsetPage} />
+          </>
         )}
       </Card>
       <style>{`@media (max-width: 1000px){ .dash-grid{ grid-template-columns: 1fr !important; } }`}</style>
