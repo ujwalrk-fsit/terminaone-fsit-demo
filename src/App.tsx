@@ -15,6 +15,8 @@ import Watchlist from './pages/Watchlist';
 import Admin from './pages/Admin';
 import Funds from './pages/Funds';
 import UiKit from './pages/UiKit';
+import DataRoom from './pages/DataRoom';
+import DataRoomDetail from './pages/DataRoomDetail';
 import { Insights, InsightDetail, SimpleAuth } from './pages/Misc';
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -66,6 +68,8 @@ export default function App() {
         <Route path="/opportunities" element={<Opportunities />} />
         <Route path="/opportunities/:id" element={<OpportunityDetail />} />
         <Route path="/funds" element={<Funds />} />
+        <Route path="/data-room" element={<RequireAuth><DataRoom /></RequireAuth>} />
+        <Route path="/data-room/:fundId" element={<RequireAuth><DataRoomDetail /></RequireAuth>} />
         <Route path="/ui-kit" element={<UiKit />} />
         {/* legacy alias: /marketplace -> /opportunities */}
         <Route path="/marketplace" element={<Navigate to="/opportunities" replace />} />

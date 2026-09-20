@@ -27,8 +27,15 @@ Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123
 ## Theme & UI kit
 
 - Light mode default, dark mode via the user menu (persisted as `tsg.theme`, SSR-safe init in `index.html`).
+- Type: Roboto throughout (700 display, 400 body, 500 sparingly). Flat surfaces, hairline borders.
 - All styling lives in `src/index.css` CSS variables — change a token, retheme the platform.
 - Open `/ui-kit` in the app to review every token and core component in one place before requesting changes.
+
+## Routes (selection)
+
+`/`, `/opportunities`, `/opportunities/:id`, `/funds`, `/data-room`, `/data-room/:fundId`,
+`/dashboard`, `/portfolio`, `/indications`, `/documents`, `/transactions`, `/watchlist`,
+`/notifications`, `/settings`, `/insights`, `/admin`, `/ui-kit`, `/auth/*`.
 
 ## API contract (Phase-2 NestJS monolith, unchanged)
 

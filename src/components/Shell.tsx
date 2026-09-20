@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Bell, Search, Building2, LayoutGrid, Star, Landmark,
+  Bell, Search, Building2, LayoutGrid, Star, Landmark, FolderOpen,
   Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
   Moon, ShieldCheck, LogOut, UserRound,
 } from 'lucide-react';
@@ -32,6 +32,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     { icon: icon(<Building2 size={18} />), title: 'Browse Companies', desc: 'Explore our curated list of private companies', to: '/opportunities' },
     { icon: icon(<Star size={18} />), title: 'Watchlist', desc: 'Track the private companies that matter to you', to: '/watchlist' },
     { icon: icon(<Landmark size={18} />), title: 'Fund Offerings', desc: 'See current opportunities to buy funds', to: '/funds' },
+    { icon: icon(<FolderOpen size={18} />), title: 'Data Room', desc: 'Diligence documents, versions and access per fund', to: '/data-room' },
   ];
   const activityItems = [
     { icon: icon(<Briefcase size={18} />), title: 'My Holdings', desc: 'View and manage your holdings', to: '/portfolio' },
@@ -45,7 +46,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     <div style={{ minHeight: '100vh' }}>
       <header className="t-header">
         <div className="t-container" style={{ height: 64, display: 'flex', alignItems: 'center', gap: 24 }}>
-          <Link to="/" style={{ font: '800 18px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link to="/" style={{ font: '700 18px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 15 }}>T</span>
             TERMINAONE
           </Link>

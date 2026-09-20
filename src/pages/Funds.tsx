@@ -38,7 +38,7 @@ export default function Funds() {
                   <div className="right"><strong>{fmtMoney(f.offeringSize)}</strong><small>Offering Size</small></div>
                 </div>
                 <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-muted)' }}>
-                  Bank details {f.bankDetails ? `${f.bankDetails.bankName} ✓` : 'to be published'}
+                  Bank details {f.bankDetails ? `${f.bankDetails.bankName} ✓` : 'to be published'} · <Link to={`/data-room/${f._id}`} className="link-more" style={{ fontSize: 12 }}>Data room</Link>
                 </div>
                 <div style={{ marginTop: 8 }}>
                   <Link to={`/indications/new?fund=${f._id}`} className="btn btn-primary btn-block">

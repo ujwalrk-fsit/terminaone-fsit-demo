@@ -60,8 +60,9 @@ export default function OpportunityDetail() {
               <div style={{ marginTop: 8, fontSize: 13 }}>Linked fund: <strong style={{ color: 'var(--text-strong)' }}>{fund.fundName}</strong> · min ${fund.minimumInvestment.toLocaleString()}</div>
             </>
           )}
-          <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+          <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <Link to={fund ? `/indications/new?fund=${fund._id}&opp=${o._id}` : '/indications/new'} className="btn btn-primary">Express interest <ArrowRight size={16} /></Link>
+            {fund && <Link to={`/data-room/${fund._id}`} className="btn btn-ghost">Open data room</Link>}
           </div>
         </div>
       </div>

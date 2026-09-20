@@ -32,7 +32,7 @@ export default function Login() {
   return (
     <div style={{ maxWidth: 440, margin: '40px auto', display: 'grid', gap: 16 }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ font: '800 22px var(--font-display)', color: 'var(--text-strong)', letterSpacing: '.04em' }}>TERMINA<span style={{ color: 'var(--primary-600)' }}>ONE</span></div>
+        <div style={{ font: '700 22px var(--font-display)', color: 'var(--text-strong)', letterSpacing: '.04em' }}>TERMINA<span style={{ color: 'var(--primary-600)' }}>ONE</span></div>
         <h1 style={{ font: '700 20px/26px var(--font-display)', color: 'var(--text-strong)', margin: '12px 0 0' }}>Log in</h1>
       </div>
       <Card>

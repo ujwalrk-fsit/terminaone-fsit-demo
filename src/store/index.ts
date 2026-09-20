@@ -29,7 +29,7 @@ const authSlice = createSlice({
   reducers: {
     login(state, a: PayloadAction<{ email: string; password: string }>) {
       const u = users.find((x) => x.emailId === a.payload.email.toLowerCase() && x.password === a.payload.password);
-      if (!u) throw new Error('Invalid credentials. Try investor@demo.local / investor123.');
+      if (!u) throw new Error('Invalid credentials. Try the sample logins on this page.');
       const payload: JwtPayload = { sub: u._id, email: u.emailId, roleGroup: u.roleGroup, permissions: permissionsFor(u.roleGroup) };
       state.user = payload; state.email = u.emailId; state.lastActive = Date.now();
       localStorage.setItem(LS_AUTH, JSON.stringify(state));

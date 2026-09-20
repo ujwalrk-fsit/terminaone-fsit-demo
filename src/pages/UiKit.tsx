@@ -83,7 +83,8 @@ export default function UiKit() {
           <div style={{ font: '700 clamp(28px,3.2vw,40px)/1.15 var(--font-display)', color: 'var(--text-strong)' }}>Display XL — Aa 123</div>
           <div style={{ font: '700 22px/28px var(--font-display)', color: 'var(--text-strong)' }}>Heading 2 — Aa 123</div>
           <div style={{ font: '700 18px/24px var(--font-display)', color: 'var(--text-strong)' }}>Heading 3 — Aa 123</div>
-          <div style={{ font: '400 14px/22px var(--font-body)' }}>Body — IBM Plex Sans, for reading and navigation.</div>
+          <div style={{ font: '400 14px/22px var(--font-body)' }}>Body — Roboto Regular, for reading and navigation.</div>
+          <div style={{ font: '500 14px/22px var(--font-body)' }}>Medium — Roboto Medium, used sparingly for emphasis.</div>
           <div className="tnum" style={{ font: '700 20px/24px var(--font-display)', color: 'var(--text-strong)' }}>$8.1M · tabular numerals</div>
         </div>
       </Card>

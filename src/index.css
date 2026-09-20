@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* TerminaOne theme — light default, SentinelOne-first. Flat surfaces, minimal shadow.
-   Dark mode via [data-theme="dark"] on <html>. Display: Montserrat (Gotham stand-in). */
+   Type: Roboto throughout (display 700, body 400, medium 500 sparingly). */
 
 :root {
   --sentinel-purple: #6B0AEA;
@@ -34,8 +34,8 @@
   --glow-primary: 0 0 0 1px rgba(107, 10, 234, .4), 0 4px 14px rgba(107, 10, 234, .18);
   --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #6B0AEA;
 
-  --font-display: 'Gotham', 'Montserrat', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-display: 'Roboto', system-ui, sans-serif;
+  --font-body: 'Roboto', system-ui, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -163,7 +163,7 @@ a { color: var(--link); }
 /* ---- opportunity card (flat) ---- */
 .opp-card { padding: 20px; border-radius: var(--r-lg); border: 1px solid var(--border-subtle); background: var(--surface-1); box-shadow: var(--elev-1); transition: border-color .15s ease-out, box-shadow .15s ease-out; }
 .opp-card:hover { border-color: var(--border-brand-hover); box-shadow: 0 4px 16px rgba(107, 10, 234, .12); }
-.opp-card__media { height: 120px; border-radius: var(--r-sm); display: grid; place-items: center; background: #2B0F4B; color: #fff; font: 800 44px/1 var(--font-display); }
+.opp-card__media { height: 120px; border-radius: var(--r-sm); display: grid; place-items: center; background: #2B0F4B; color: #fff; font: 700 44px/1 var(--font-display); }
 .opp-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-top: 16px; }
 .opp-card__head h3 { font: 700 18px/24px var(--font-display); color: var(--text-strong); margin: 0; }
 .opp-card__head h3 a { color: inherit; text-decoration: none; }
@@ -190,7 +190,7 @@ a { color: var(--link); }
 
 /* ---- article cards ---- */
 .post__media { display: block; aspect-ratio: 1.85/1; border-radius: var(--r-sm); overflow: hidden; position: relative; background: #2B0F4B; }
-.post__media .fill { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255, 255, 255, .85); font: 800 40px/1 var(--font-display); }
+.post__media .fill { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255, 255, 255, .85); font: 700 40px/1 var(--font-display); }
 .post__tag { position: absolute; top: 12px; left: 12px; }
 .post h3 { margin: 16px 0 0; }
 .post h3 a { color: var(--text-strong); text-decoration: none; }

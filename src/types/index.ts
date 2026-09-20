@@ -7,10 +7,10 @@ export type RoleGroup = 'admin' | 'advisor' | 'affiliate' | 'fund_manager' | 'mo
 export interface Permission { module: string; actions: string[]; }
 export interface Role { _id: string; name: string; roleGroup: RoleGroup; permissions: Permission[]; isActive: boolean; }
 
-export interface MockUser {
+export interface AppUser {
   _id: string; firstName: string; lastName: string; emailId: string;
   roleGroup: RoleGroup; roleId: string; status: 'active' | 'pending' | 'deactivated';
-  investorStatus?: string; password: string; // mock only (plaintext demo)
+  investorStatus?: string; password: string; // sample credentials for the reference build
 }
 
 export interface JwtPayload { sub: string; email: string; roleGroup: RoleGroup; permissions: Permission[]; }
@@ -30,7 +30,7 @@ export interface FundOffering {
   status: FundStatus; managers: string[]; affiliates: string[];
   faqs: { q: string; a: string }[]; keyRisks: string;
   bankDetails?: BankDetails; opportunityId?: string;
-  raised?: number; // mock subscribed amount; progress = raised / offeringSize
+  raised?: number; // subscribed amount; progress = raised / offeringSize
 }
 
 export interface QuarterlyPoint { year: number; quarter: string; value: number; }
@@ -86,6 +86,19 @@ export interface SignatureRequest {
 }
 
 export interface Article { _id: string; title: string; status: 'draft' | 'published'; category: string; bodyMarkdown: string; updatedAt: string; }
+
+export type DataFolder =
+  | 'Offering Memorandum' | 'Subscription Documents' | 'Financials & Valuations'
+  | 'Legal & Compliance' | 'Tax Documents' | 'Reports & Updates';
+export type DataFileType = 'PDF' | 'XLSX' | 'DOCX' | 'ZIP' | 'CSV';
+export interface DataVersion { v: number; uploadedBy: string; uploadedAt: string; note: string; sizeKb: number; }
+export interface DataFile {
+  _id: string; fundId: string; folder: DataFolder; title: string;
+  fileType: DataFileType; status: 'final' | 'draft' | 'superseded';
+  access: RoleGroup[]; // empty = every signed-in role
+  versions: DataVersion[]; summary: string; updatedAt: string;
+}
+export interface DataActivity { _id: string; fundId: string; actor: string; action: string; target: string; createdAt: string; }
 
 export interface AuditItem { _id: string; module: string; action: string; performedBy: string; createdAt: string; status: string; }
 export interface NoticeItem { _id: string; title: string; body: string; category: string; isRead: boolean; createdAt: string; }
