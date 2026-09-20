@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+:root {
+  --tsg-blue: #0b3b8f;
+  --tsg-navy: #0a2540;
+  --tsg-accent: #2f7bff;
+}
+
+html, body, #root { height: 100%; }
+body { background: #f6f8fc; color: #0a2540; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+a { color: var(--tsg-accent); }
