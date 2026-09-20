@@ -15,6 +15,17 @@ function vwap(id: string, ref: number) {
   return s.reduce((a, p) => a + p.v, 0) / s.length;
 }
 
+function bidAskFor(o: Opportunity, indications: Indication[]) {
+  const rel = indications.filter((i) => i.opportunityId === o._id || (o.fundId && i.fundId === o.fundId));
+  const units = rel.reduce((a, i) => a + i.numberOfUnits, 0);
+  const amt = rel.reduce((a, i) => a + i.investmentAmount, 0);
+  const high = units > 0 ? amt / units : null;
+  const ask = o.tsgPrice != null ? o.tsgPrice * 1.03 : null;
+  const lfr = o.lastRound?.pps ?? null;
+  const w = o.tsgPrice != null ? vwap(o._id, o.tsgPrice) : null;
+  return { high, ask, lfr, w };
+}
+
 export default function Dashboard() {
   const auth = useSelector((s: RootState) => s.auth);
   const dispatch = useDispatch();
@@ -27,12 +38,12 @@ export default function Dashboard() {
   const watchIds = useSelector((s: RootState) => s.watch.ids);
 
   const withPrice = useMemo(() => opportunities.filter((o) => o.tsgPrice != null && o.priceChange1Y != null), [opportunities]);
-  const gainers = [...withPrice].sort((a, b) => (b.priceChange1Y ?? 0) - (a.priceChange1Y ?? 0)).slice(0, 5);
-  const losers = [...withPrice].sort((a, b) => (a.priceChange1Y ?? 0) - (b.priceChange1Y ?? 0)).slice(0, 5);
-  const bids = [...indications].sort((a, b) => b.investmentAmount - a.investmentAmount).slice(0, 4);
-  const asks = [...opportunities.filter((o) => o.tsgPrice != null)].sort((a, b) => (b.tsgPrice ?? 0) - (a.tsgPrice ?? 0)).slice(0, 4);
-  const watched = opportunities.filter((o) => watchIds.includes(o._id));
-  const wrows = watched.map((o) => ({ o, ...bidAskFor(o) }));
+  const gainers = useMemo(() => [...withPrice].sort((a, b) => (b.priceChange1Y ?? 0) - (a.priceChange1Y ?? 0)).slice(0, 5), [withPrice]);
+  const losers = useMemo(() => [...withPrice].sort((a, b) => (a.priceChange1Y ?? 0) - (b.priceChange1Y ?? 0)).slice(0, 5), [withPrice]);
+  const bids = useMemo(() => [...indications].sort((a, b) => b.investmentAmount - a.investmentAmount).slice(0, 4), [indications]);
+  const asks = useMemo(() => [...opportunities.filter((o) => o.tsgPrice != null)].sort((a, b) => (b.tsgPrice ?? 0) - (a.tsgPrice ?? 0)).slice(0, 4), [opportunities]);
+  const watched = useMemo(() => opportunities.filter((o) => watchIds.includes(o._id)), [opportunities, watchIds]);
+  const wrows = useMemo(() => watched.map((o) => ({ o, ...bidAskFor(o, indications) })), [watched, indications]);
   const wGet = (r: { o: Opportunity } & ReturnType<typeof bidAskFor>, k: string): string | number => {
     if (k === 'company') return r.o.name;
     if (k === 'bid') return r.high ?? -1;
@@ -43,20 +54,9 @@ export default function Dashboard() {
   };
   const [wsorted, wsk, wdir, wsort] = useSort(wrows, 'price', -1, wGet);
   const [wpaged, wpage, wpages, wsetPage, wtotal] = usePagination(wsorted, 8);
-  const queue = indications.filter((i) => ['AWAITING_APPROVAL', 'AWAITING_SIGNATURE', 'SUBSCRIBED', 'PAYMENT_PROCESSING'].includes(i.status));
-  const txns = transfers.slice(0, 4);
+  const queue = useMemo(() => indications.filter((i) => ['AWAITING_APPROVAL', 'AWAITING_SIGNATURE', 'SUBSCRIBED', 'PAYMENT_PROCESSING'].includes(i.status)), [indications]);
+  const txns = useMemo(() => transfers.slice(0, 4), [transfers]);
   const oppOf = (i: Indication) => opportunities.find((o) => o._id === i.opportunityId) ?? opportunities.find((o) => o.fundId === i.fundId);
-
-  const bidAskFor = (o: Opportunity) => {
-    const rel = indications.filter((i) => i.opportunityId === o._id || (o.fundId && i.fundId === o.fundId));
-    const units = rel.reduce((a, i) => a + i.numberOfUnits, 0);
-    const amt = rel.reduce((a, i) => a + i.investmentAmount, 0);
-    const high = units > 0 ? amt / units : null;
-    const ask = o.tsgPrice != null ? o.tsgPrice * 1.03 : null;
-    const lfr = o.lastRound?.pps ?? null;
-    const w = o.tsgPrice != null ? vwap(o._id, o.tsgPrice) : null;
-    return { high, ask, lfr, w };
-  };
 
   return (
     <div style={{ display: 'grid', gap: 12 }}>
@@ -210,7 +210,7 @@ export default function Dashboard() {
                       <td className="tnum"><b>${o.tsgPrice?.toFixed(2) ?? '—'}</b></td>
                       <td style={{ whiteSpace: 'nowrap' }}>
                         <Link to={`/indications/new?opp=${o._id}`} className="link-more" style={{ fontSize: 12 }}>Submit IOI</Link>{' '}
-                        <button onClick={() => dispatch(toggle(o._id))} aria-label={`Remove ${o.name}`} style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--text-subtle)' }}>✕</button>
+                        <button onClick={() => dispatch(toggle(o._id))} aria-label={`Remove ${o.name}`} style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--text-subtle)', padding: 6, minWidth: 28, minHeight: 28 }}>✕</button>
                       </td>
                     </tr>
                   );

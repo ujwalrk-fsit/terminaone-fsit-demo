@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, PieChart, Landmark, SlidersHorizontal } from 'lucide-react';
 import { login, loginAs } from '../store';
+import { announce } from '../components/Live';
+import { Field, focusFirstError } from '../components/Field';
 import type { RoleGroup } from '../types';
 
 const schema = z.object({ email: z.string().email(), password: z.string().min(6) });
@@ -55,13 +57,13 @@ export default function Login() {
   const [err, setErr] = useState('');
   const [show, setShow] = useState(false);
   const [remember, setRemember] = useState(true);
-  const { register, handleSubmit } = useForm<F>({ resolver: zodResolver(schema), defaultValues: { email: remembered(), password: 'investor123' } });
+  const { register, handleSubmit, formState: { errors } } = useForm<F>({ resolver: zodResolver(schema), defaultValues: { email: remembered(), password: 'investor123' } });
   return (
     <div className="auth-split">
       <BrandPanel />
       <div className="auth-form">
         <div className="auth-card">
-          <div className="auth-word">TerminaOne</div>
+          <div className="auth-word" translate="no">TerminaOne</div>
           <div className="auth-sub">Log in</div>
           <form onSubmit={handleSubmit((v) => {
             try {
@@ -71,16 +73,29 @@ export default function Login() {
                 else localStorage.removeItem(REM_KEY);
               } catch { /* */ }
               navigate('/dashboard');
-            } catch (e: unknown) { setErr(e instanceof Error ? e.message : 'Login failed'); }
-          })}>
-            <div className="auth-field"><input {...register('email')} placeholder="Email" aria-label="Email" /></div>
-            <div className="auth-field">
-              <input {...register('password')} type={show ? 'text' : 'password'} placeholder="Password" aria-label="Password" style={{ paddingRight: 40 }} />
-              <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
-                {show ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+            } catch (e: unknown) {
+              const m = e instanceof Error ? e.message : 'Login failed';
+              setErr(m); announce(m);
+            }
+          }, () => focusFirstError())}>
+            <div style={{ display: 'grid', gap: 10 }}>
+              <Field label="Email" required error={errors.email?.message}>
+                <input {...register('email')} placeholder="you@example.com" autoComplete="email" name="email" spellCheck={false} />
+              </Field>
+              <div>
+                <label htmlFor="login-password" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-strong)', marginBottom: 4 }}>
+                  Password <span aria-hidden="true" style={{ color: 'var(--danger)' }}> *</span><span className="sr-only"> (required)</span>
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input {...register('password')} id="login-password" type={show ? 'text' : 'password'} placeholder="Password" autoComplete="current-password" name="password" aria-invalid={!!errors.password} style={{ paddingRight: 40, width: '100%' }} />
+                  <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'} style={{ position: 'absolute', right: 8, top: 8 }}>
+                    {show ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {errors.password?.message && <div role="alert" style={{ fontSize: 12, color: 'var(--danger)', marginTop: 4 }}>{errors.password.message}</div>}
+              </div>
             </div>
-            {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+            {err && <div role="alert" style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
             <div style={{ display: 'flex', alignItems: 'center', fontSize: 13, margin: '2px 0 14px' }}>
               <label style={{ display: 'flex', gap: 6, alignItems: 'center', cursor: 'pointer' }}>
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} /> Remember me

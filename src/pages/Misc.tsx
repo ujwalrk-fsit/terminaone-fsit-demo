@@ -8,6 +8,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useColl, upsert } from '../db';
 import type { Article, AppUser, RoleGroup } from '../types';
 import { login } from '../store';
+import { announce } from '../components/Live';
+import { Field, focusFirstError } from '../components/Field';
 import { Card } from '../components/Shell';
 import { Markdown } from '../components/Markdown';
 import { BrandPanel } from './Login';
@@ -66,33 +68,45 @@ export function Signup() {
       <BrandPanel />
       <div className="auth-form">
         <div className="auth-card">
-          <div className="auth-word">TerminaOne</div>
+          <div className="auth-word" translate="no">TerminaOne</div>
           <div className="auth-sub">Create account</div>
           <form onSubmit={handleSubmit((v) => {
-            if (users.some((u) => u.emailId === v.email.toLowerCase())) { setErr('An account with this email already exists.'); return; }
+            if (users.some((u) => u.emailId === v.email.toLowerCase())) { const m = 'An account with this email already exists.'; setErr(m); announce(m); return; }
             upsert('users', {
               _id: `u_${Date.now()}`, firstName: v.firstName, lastName: v.lastName,
               emailId: v.email.toLowerCase(), roleGroup: 'investor' as RoleGroup, roleId: 'r_investor',
               status: 'pending', investorStatus: 'PENDING_ONBOARDING', password: v.password,
             });
-            try { dispatch(login({ email: v.email, password: v.password })); } catch { setErr('Account created. Please log in.'); return; }
+            try { dispatch(login({ email: v.email, password: v.password })); announce('Account created. Continue to setup.'); } catch { const m = 'Account created. Please log in.'; setErr(m); announce(m); return; }
             navigate('/onboarding');
-          })}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
-              <div className="auth-field"><input {...register('firstName')} placeholder="First name" aria-label="First name" /></div>
-              <div className="auth-field"><input {...register('lastName')} placeholder="Last name" aria-label="Last name" /></div>
+          }, () => focusFirstError())}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <Field label="First name" required error={errors.firstName?.message}>
+                <input {...register('firstName')} placeholder="Ada" autoComplete="given-name" name="firstName" />
+              </Field>
+              <Field label="Last name" required error={errors.lastName?.message}>
+                <input {...register('lastName')} placeholder="Lovelace" autoComplete="family-name" name="lastName" />
+              </Field>
             </div>
-            <div className="auth-field"><input {...register('email')} placeholder="Email" aria-label="Email" /></div>
-            <div className="auth-field">
-              <input {...register('password')} type={show ? 'text' : 'password'} placeholder="Password (min 6)" aria-label="Password" style={{ paddingRight: 40 }} />
-              <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
-                {show ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
+            <Field label="Email" required error={errors.email?.message}>
+              <input {...register('email')} placeholder="you@example.com" autoComplete="email" name="email" spellCheck={false} />
+            </Field>
+            <div>
+              <label htmlFor="signup-password" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-strong)', marginBottom: 4 }}>
+                Password <span aria-hidden="true" style={{ color: 'var(--danger)' }}> *</span><span className="sr-only"> (required)</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input {...register('password')} id="signup-password" type={show ? 'text' : 'password'} placeholder="Password (min 6)" autoComplete="new-password" name="new-password" aria-invalid={!!errors.password} style={{ paddingRight: 40, width: '100%' }} />
+                <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'} style={{ position: 'absolute', right: 8, top: 8 }}>
+                  {show ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {errors.password?.message && <div role="alert" style={{ fontSize: 12, color: 'var(--danger)', marginTop: 4 }}>{errors.password.message}</div>}
             </div>
             {(errors.firstName || errors.lastName || errors.email || errors.password) && (
               <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>Please complete all fields correctly.</div>
             )}
-            {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+            {err && <div role="alert" style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
             <button className="btn btn-accent btn-block" style={{ height: 44 }}>Create account</button>
           </form>
           <div style={{ fontSize: 13, textAlign: 'center', marginTop: 18 }}>
@@ -119,14 +133,14 @@ export function Forgot() {
       <BrandPanel />
       <div className="auth-form">
         <div className="auth-card">
-          <div className="auth-word">TerminaOne</div>
+          <div className="auth-word" translate="no">TerminaOne</div>
           <div className="auth-sub">Reset password</div>
           {step === 0 && (
             <div>
-              <div className="auth-field"><input placeholder="Account email" aria-label="Account email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-              {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+              <div className="auth-field"><input placeholder="Account email" autoComplete="email" name="email" spellCheck={false} aria-label="Account email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              {err && <div role="alert" style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
               <button className="btn btn-accent btn-block" style={{ height: 44 }} onClick={() => {
-                if (!users.some((u) => u.emailId === email.toLowerCase())) { setErr('No account found for this email.'); return; }
+                if (!users.some((u) => u.emailId === email.toLowerCase())) { const m = 'No account found for this email.'; setErr(m); announce(m); return; }
                 setErr(''); setStep(1);
               }}>Send code</button>
             </div>
@@ -134,19 +148,20 @@ export function Forgot() {
           {step === 1 && (
             <div>
               <div style={{ fontSize: 13, marginBottom: 10 }}>Enter the 6-digit code sent to <b>{email}</b>. (Reference build code: <b className="tnum">{CODE}</b>)</div>
-              <div className="auth-field"><input placeholder="123456" aria-label="Verification code" value={code} onChange={(e) => setCode(e.target.value)} /></div>
+              <div className="auth-field"><input placeholder="123456" autoComplete="one-time-code" name="one-time-code" inputMode="numeric" aria-label="Verification code" value={code} onChange={(e) => setCode(e.target.value)} /></div>
               <div className="auth-field">
-                <input type={show ? 'text' : 'password'} placeholder="New password (min 6)" aria-label="New password" value={pw} onChange={(e) => setPw(e.target.value)} style={{ paddingRight: 40 }} />
+                <input type={show ? 'text' : 'password'} placeholder="New password (min 6)" autoComplete="new-password" name="new-password" aria-label="New password" value={pw} onChange={(e) => setPw(e.target.value)} style={{ paddingRight: 40 }} />
                 <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
                   {show ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+              {err && <div role="alert" style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
               <button className="btn btn-accent btn-block" style={{ height: 44 }} onClick={() => {
+                const fail = (m: string) => { setErr(m); announce(m); };
                 const u = users.find((x) => x.emailId === email.toLowerCase());
-                if (!u) { setErr('No account found for this email.'); return; }
-                if (code.trim() !== CODE) { setErr('Incorrect code.'); return; }
-                if (pw.length < 6) { setErr('Password needs at least 6 characters.'); return; }
+                if (!u) { fail('No account found for this email.'); return; }
+                if (code.trim() !== CODE) { fail('Incorrect code.'); return; }
+                if (pw.length < 6) { fail('Password needs at least 6 characters.'); return; }
                 upsert('users', { ...u, password: pw });
                 navigate('/auth/login');
               }}>Reset password</button>

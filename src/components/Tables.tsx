@@ -63,7 +63,7 @@ export function Avatar({ name }: { name: string }) {
 export function ExpandBtn({ open, onClick, label }: { open: boolean; onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} aria-expanded={open} aria-label={label}
-      style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--text-subtle)', padding: 4 }}>
+      style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--text-subtle)', padding: 6, minWidth: 28, minHeight: 28, display: 'inline-grid', placeItems: 'center' }}>
       <ChevronDown size={15} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .15s' }} />
     </button>
   );

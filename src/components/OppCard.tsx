@@ -13,11 +13,8 @@ export function StatusPill({ status }: { status: FundStatus }) {
   return <span className="pill pill-neutral">{status === 'draft' ? 'Draft' : 'Closed'}</span>;
 }
 
-export function fmtMoney(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${Math.round(n / 1_000)}K`;
-  return `$${n.toLocaleString()}`;
-}
+import { fmtMoney } from '../format';
+export { fmtMoney };
 
 export function OppCard({ opp, fund }: { opp: Opportunity; fund?: FundOffering }) {
   const f = fund;

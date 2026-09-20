@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { useColl } from '../db';
+import { useQueryState } from '../url';
 import type { FundOffering, Opportunity } from '../types';
 import { OppCard } from '../components/OppCard';
 import { Empty } from '../components/Shell';
 
 export default function Opportunities() {
-  const [q, setQ] = useState('');
-  const [sector, setSector] = useState('');
+  const [q, setQ] = useQueryState('q');
+  const [sector, setSector] = useQueryState('sector');
   const opportunities = useColl<Opportunity>('opportunities');
   const funds = useColl<FundOffering>('funds');
   const sectors = useMemo(() => [...new Set(opportunities.map((o) => o.sector))], [opportunities]);

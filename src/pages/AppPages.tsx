@@ -9,6 +9,8 @@ import { actorName } from '../dataRoom';
 import { Card, Empty } from '../components/Shell';
 import { SignPad } from '../components/BankSign';
 import { SortTh, Toolbar, Pager, useSort, usePagination } from '../components/Tables';
+import { confirm } from '../components/Confirm';
+import { announce } from '../components/Live';
 import { useTheme, toggleTheme } from '../theme';
 
 const input = { padding: '8px 10px', width: '100%' } as const;
@@ -69,7 +71,11 @@ export function Documents() {
               <span style={{ marginLeft: 'auto' }} className={`pill ${d.status === 'active' ? 'pill-live' : d.status === 'draft' ? 'pill-neutral' : 'pill-info'}`}>{d.status}</span>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 4 }}>v{d.version} · {d.documentType} · {d.updatedAt} · sign: {d.requiresSignature ? 'yes' : 'no'}</div>
-            {canUpload && <button className="link-more" style={{ fontSize: 12, marginTop: 6 }} onClick={() => remove('docs', d._id)}>Archive</button>}
+            {canUpload && <button className="link-more" style={{ fontSize: 12, marginTop: 6 }} onClick={async () => {
+              if (await confirm({ title: `Archive “${d.title}”?`, body: 'The document leaves the library immediately.', confirmLabel: 'Archive', danger: true })) {
+                remove('docs', d._id); announce(`Archived document ${d.title}.`);
+              }
+            }}>Archive</button>}
           </Card>
         ))}
       </div>
@@ -223,7 +229,11 @@ export function Settings() {
       <Card>
         <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 8, fontSize: 14 }}>Reference data</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Restore all lists, users and rooms to their original sample state.</div>
-        <div style={{ marginTop: 8 }}><button className="btn btn-ghost" onClick={() => { resetDb(); window.location.reload(); }}>Reset demo data</button></div>
+        <div style={{ marginTop: 8 }}><button className="btn btn-ghost" onClick={async () => {
+          if (await confirm({ title: 'Reset all reference data?', body: 'Every list, user and room returns to its original sample state.', confirmLabel: 'Reset data', danger: true })) {
+            resetDb(); window.location.reload();
+          }
+        }}>Reset demo data</button></div>
       </Card>
     </div>
   );

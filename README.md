@@ -26,12 +26,22 @@ Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123
 
 ## Theme & UI kit (v2 — blue, Mintlify-derived)
 
-- Light mode default, dark mode via the user menu (persisted as `tsg.theme`, SSR-safe init in `index.html`).
+- Light mode default, dark mode via the user menu (persisted as `tsg.theme`, SSR-safe init in `index.html`, `color-scheme` set per theme).
 - Type: Inter for prose, Geist Mono (tabular) for every numeric value.
-- Single blue accent `#3772cf` (deep `#2c5aa6`) for CTAs/active/chart series; gains `#1ba673`, losses `#d45656` — blue is never a gain signal.
-- Black-pill primary buttons, blue accent money-CTAs, full-rounded pills, flat surfaces, 12px cards.
+- Single blue accent `#3772cf` (deep `#2c5aa6`) for CTAs/active/chart series; gains `#1ba673`, losses `#d45656` — blue is never a gain signal. AA-graded text tokens (`--success-text`, `--warning-text`) keep small text at ≥4.5:1.
+- Black-pill primary buttons, blue accent money-CTAs, 6–8px control radii, flat surfaces, 12px cards.
 - All styling lives in `src/index.css` CSS variables — change a token, retheme the platform.
 - Open `/ui-kit` in the app to review every token and core component in one place before requesting changes.
+
+## Shared modules (small interfaces, reused everywhere)
+
+- `src/format.ts` — `fmtMoney`, `fmtCompact`, `fmtNum`, `fmtPct`, `fmtDate`.
+- `src/url.ts` — `useQueryState(key, initial)`; filter/tab/range state deep-links via query params.
+- `src/components/Confirm.tsx` — `confirm({title, body, confirmLabel, danger}): Promise<boolean>` + `<ConfirmHost/>`; all destructive actions confirm first.
+- `src/components/Live.tsx` — `announce(msg)` + `<LiveHost/>` polite region for toasts and errors.
+- `src/components/Field.tsx` — `<Field label required hint error>` for labelled controls + `focusFirstError()`.
+- `src/components/Tables.tsx` — `useSort`, `usePagination`, `SortTh`, `TableTabs`, `Toolbar`, `Pager`, `Avatar`, `ExpandBtn`, `toCsv`.
+- Lean bundle: chart routes (`/dashboard`, `/portfolio`, `/opportunities/:id`) lazy-load recharts on demand.
 
 ## Routes (selection)
 

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { announce } from './Live';
 import type { BankDetails } from '../types';
 
 const dt = { color: 'var(--text-subtle)' };
@@ -43,6 +44,7 @@ export function SignPad({ onSign }: { onSign: (dataUrl: string, mode: string) =>
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
 
+  const capture = (url: string, mode: string) => { announce(`Signature captured by ${mode}.`); onSign(url, mode); };
   const drawHandlers = {
     onPointerDown: (e: React.PointerEvent) => { drawing.current = true; const c = canvasRef.current!; const r = c.getBoundingClientRect(); const ctx = c.getContext('2d')!; ctx.strokeStyle = '#0B0C1B'; ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); },
     onPointerMove: (e: React.PointerEvent) => { if (!drawing.current) return; const c = canvasRef.current!; const r = c.getBoundingClientRect(); const ctx = c.getContext('2d')!; ctx.lineWidth = 2; ctx.strokeStyle = '#0B0C1B'; ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); },
@@ -62,23 +64,25 @@ export function SignPad({ onSign }: { onSign: (dataUrl: string, mode: string) =>
           <button className="btn btn-primary" style={{ marginTop: 8 }} onClick={() => {
             const c = document.createElement('canvas'); c.width = 400; c.height = 100;
             const ctx = c.getContext('2d')!; ctx.font = '40px cursive'; ctx.fillText(typed || 'X', 20, 60);
-            onSign(c.toDataURL(), 'type');
+            capture(c.toDataURL(), 'type');
           }}>Use typed signature</button>
         </div>
       )}
       {mode === 'draw' && (
         <div>
-          <canvas ref={canvasRef} width={400} height={140} style={{ width: '100%', touchAction: 'none', borderRadius: 8, background: '#fff' }} {...drawHandlers} />
+          <canvas ref={canvasRef} width={400} height={140} role="img"
+            aria-label="Signature drawing area. Drawing needs a pointer — typing and file upload above work fully with a keyboard."
+            style={{ width: '100%', touchAction: 'none', borderRadius: 8, background: '#fff' }} {...drawHandlers} />
           <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
             <button className="btn btn-ghost" onClick={() => canvasRef.current?.getContext('2d')?.clearRect(0, 0, 400, 140)}>Clear</button>
-            <button className="btn btn-primary" onClick={() => onSign(canvasRef.current!.toDataURL(), 'draw')}>Use drawing</button>
+            <button className="btn btn-primary" onClick={() => capture(canvasRef.current!.toDataURL(), 'draw')}>Use drawing</button>
           </div>
         </div>
       )}
       {mode === 'upload' && (
-        <input type="file" accept="image/*" onChange={(e) => {
+        <input type="file" accept="image/*" aria-label="Upload a signature image" onChange={(e) => {
           const f = e.target.files?.[0]; if (!f) return;
-          const r = new FileReader(); r.onload = () => onSign(String(r.result), 'upload'); r.readAsDataURL(f);
+          const r = new FileReader(); r.onload = () => capture(String(r.result), 'upload'); r.readAsDataURL(f);
         }} />
       )}
       <p style={{ margin: 0, fontSize: 12, color: 'var(--text-subtle)' }}>Signatures follow the order investor → advisor → fund manager.</p>

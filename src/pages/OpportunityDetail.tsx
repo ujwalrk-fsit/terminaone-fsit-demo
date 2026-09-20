@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight, CalendarDays, ChevronDown, Download, ShieldCheck, TriangleAlert } from 'lucide-react';
@@ -9,6 +9,8 @@ import { buyerFaqs, sellerFaqs, companyExt, companyNews, hashStr, priceSeries, R
 import { Empty } from '../components/Shell';
 import { StatusPill, fmtMoney, tagClass } from '../components/OppCard';
 import { toggle, type RootState } from '../store';
+import { useTheme } from '../theme';
+import { useQueryState } from '../url';
 
 const TABS = [
   { k: 'market', label: 'Active Market' },
@@ -21,10 +23,11 @@ const TABS = [
 ] as const;
 
 function Acc({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
+  const id = useId();
   return (
     <div className="acc">
-      <button aria-expanded={open} onClick={onToggle}><span>{q}</span><ChevronDown size={16} /></button>
-      {open && <div className="acc__body">{a}</div>}
+      <button aria-expanded={open} aria-controls={id} onClick={onToggle}><span>{q}</span><ChevronDown size={16} /></button>
+      {open && <div className="acc__body" role="region" id={id}>{a}</div>}
     </div>
   );
 }
@@ -38,12 +41,15 @@ export default function OpportunityDetail() {
   const o = opportunities.find((x) => x._id === id);
   const dispatch = useDispatch();
   const auth = useSelector((s: RootState) => s.auth);
+  const theme = useTheme();
+  const tickFill = theme === 'dark' ? '#8fa0c2' : '#64769a';
   const watch = useSelector((s: RootState) => s.watch);
-  const [tab, setTab] = useState<string>('market');
-  const [range, setRange] = useState<string>('1Y');
+  const [tab, setTab] = useQueryState('tab', 'market');
+  const [range, setRange] = useQueryState('range', '1Y');
   const [sub, setSub] = useState<'investors' | 'leadership' | 'board'>('investors');
   const [openFaq, setOpenFaq] = useState<string | null>(null);
   const refs = useRef<Record<string, HTMLElement | null>>({});
+  const tabBtns = useRef<(HTMLButtonElement | null)[]>([]);
   const spyOff = useRef(false);
 
   const ext = companyExt[id];
@@ -118,9 +124,18 @@ export default function OpportunityDetail() {
 
       {/* 2 · sticky tabs */}
       <div className="tabs-sticky no-print">
-        <div className="tabs" role="tablist">
-          {TABS.map((t) => (
-            <button key={t.k} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' on' : ''}`} onClick={() => go(t.k)}>
+        <div className="tabs" role="tablist" aria-label="Company sections"
+          onKeyDown={(e) => {
+            const i = TABS.findIndex((t) => t.k === tab);
+            let n: number | null = null;
+            if (e.key === 'ArrowRight') n = (i + 1) % TABS.length;
+            else if (e.key === 'ArrowLeft') n = (i - 1 + TABS.length) % TABS.length;
+            else if (e.key === 'Home') n = 0;
+            else if (e.key === 'End') n = TABS.length - 1;
+            if (n != null) { e.preventDefault(); tabBtns.current[n]?.focus(); go(TABS[n].k); }
+          }}>
+          {TABS.map((t, i) => (
+            <button key={t.k} ref={(el) => { tabBtns.current[i] = el; }} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' on' : ''}`} onClick={() => go(t.k)} tabIndex={tab === t.k ? 0 : -1}>
               {t.label}
             </button>
           ))}
@@ -129,6 +144,7 @@ export default function OpportunityDetail() {
 
       {/* A · Active Market */}
       <section id="sec-market" ref={(el) => { refs.current.market = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Active Market</h2>
         <div className="card" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <b style={{ color: 'var(--text-strong)' }}>Market status</b>
           <span className="tnum" style={{ fontSize: 13 }}>{asks} seller asks · {bids} buyer bids</span>
@@ -163,6 +179,7 @@ export default function OpportunityDetail() {
 
       {/* B · Trade Metrics */}
       <section id="sec-metrics" ref={(el) => { refs.current.metrics = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Trade Metrics</h2>
         <div className="kpis">
           <div className="kpi"><small>Activity</small><b>{o.activity}</b></div>
           <div className="kpi"><small>Bids / Asks</small><b>{bids} / {asks}</b></div>
@@ -185,8 +202,8 @@ export default function OpportunityDetail() {
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={slice} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
                 <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
-                <XAxis dataKey="i" tick={{ fill: '#64769a', fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (range === '7D' ? `D${v - slice[0].i + 1}` : range === '1M' ? `W${Math.floor((v - slice[0].i) / 7) + 1}` : `M${Math.floor((v - slice[0].i) / 30) + 1}`)} minTickGap={24} />
-                <YAxis tick={{ fill: '#64769a', fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} domain={[(lo * 0.97).toFixed(0), (hi * 1.03).toFixed(0)]} />
+                <XAxis dataKey="i" tick={{ fill: tickFill, fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (range === '7D' ? `D${v - slice[0].i + 1}` : range === '1M' ? `W${Math.floor((v - slice[0].i) / 7) + 1}` : `M${Math.floor((v - slice[0].i) / 30) + 1}`)} minTickGap={24} />
+                <YAxis tick={{ fill: tickFill, fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} domain={[(lo * 0.97).toFixed(0), (hi * 1.03).toFixed(0)]} />
                 <Tooltip contentStyle={{ background: '#16233c', border: 'none', borderRadius: 6, color: '#fff', fontFamily: 'Geist Mono, monospace', fontSize: 12 }} />
                 <Bar dataKey="vol" fill="var(--chart-1)" fillOpacity={0.25} radius={[4, 4, 0, 0]} />
                 <Area type="monotone" dataKey="v" stroke="var(--chart-1)" strokeWidth={2} fill="var(--chart-1)" fillOpacity={0.1} dot={false} />
@@ -212,6 +229,7 @@ export default function OpportunityDetail() {
 
       {/* C · Funding */}
       <section id="sec-funding" ref={(el) => { refs.current.funding = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Funding</h2>
         <div className="card">
           <b style={{ color: 'var(--text-strong)' }}>Funding history</b>
           <div className="timeline" style={{ marginTop: 12 }}>
@@ -247,6 +265,7 @@ export default function OpportunityDetail() {
 
       {/* D · Company Details */}
       <section id="sec-company" ref={(el) => { refs.current.company = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Company Details</h2>
         <div className="card">
           <b style={{ color: 'var(--text-strong)' }}>About {o.name}</b>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '8px 0 0' }}>{ext.overview}</p>
@@ -278,6 +297,7 @@ export default function OpportunityDetail() {
 
       {/* E · FAQs */}
       <section id="sec-faqs" ref={(el) => { refs.current.faqs = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Frequently Asked Questions</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12 }} className="faq-grid">
           <div>
             <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 8, fontSize: 14 }}>Buyer FAQs</div>
@@ -292,6 +312,7 @@ export default function OpportunityDetail() {
 
       {/* F · News */}
       <section id="sec-news" ref={(el) => { refs.current.news = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">News and Highlights</h2>
         <b style={{ color: 'var(--text-strong)' }}>News & highlights</b>
         <div className="grid-posts" style={{ gridTemplateColumns: 'repeat(2, minmax(0,1fr))' }}>
           {news.map((n, i) => (
@@ -306,6 +327,7 @@ export default function OpportunityDetail() {
 
       {/* G · Similar matrix */}
       <section id="sec-similar" ref={(el) => { refs.current.similar = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 108 }}>
+        <h2 className="sr-only">Similar Companies</h2>
         <b style={{ color: 'var(--text-strong)' }}>Similar companies</b>
         <div className="card" style={{ overflowX: 'auto' }}>
           <table className="grid compact-table" style={{ minWidth: 760 }}>
@@ -365,7 +387,7 @@ export function CompanyNotice() {
     <div className="notice-banner no-print" style={{ marginBottom: 14 }}>
       <TriangleAlert size={15} color="var(--warning)" style={{ flex: 'none', marginTop: 2 }} />
       <span><b>Trading notice:</b> secondary transfers need company ROFR waiver + fund-manager consent. Windows open per fund — check Data Room before expressing interest.</span>
-      <button onClick={() => setOff(true)} aria-label="Dismiss">✕</button>
+      <button onClick={() => setOff(true)} aria-label="Dismiss" style={{ padding: 6, minWidth: 28, minHeight: 28 }}>✕</button>
     </div>
   );
 }

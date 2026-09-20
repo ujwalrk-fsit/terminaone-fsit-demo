@@ -60,19 +60,19 @@ export default function Onboarding() {
       <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Section {Math.min(step + 1, 6)} of 6 — {STEPS[Math.min(step, 5)]}</div>
 
       {step === 0 && <Card><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <label style={{ fontSize: 12 }}>First name<input style={input} value={d.firstName ?? ''} onChange={(e) => set('firstName', e.target.value)} /></label>
-        <label style={{ fontSize: 12 }}>Last name<input style={input} value={d.lastName ?? ''} onChange={(e) => set('lastName', e.target.value)} /></label>
-        <label style={{ fontSize: 12 }}>Date of birth<input style={input} type="date" value={d.dob ?? ''} onChange={(e) => set('dob', e.target.value)} /></label>
-        <label style={{ fontSize: 12 }}>Phone<input style={input} value={d.phone ?? ''} onChange={(e) => set('phone', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>First name<input style={input} autoComplete="given-name" value={d.firstName ?? ''} onChange={(e) => set('firstName', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>Last name<input style={input} autoComplete="family-name" value={d.lastName ?? ''} onChange={(e) => set('lastName', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>Date of birth<input style={input} type="date" autoComplete="bday" value={d.dob ?? ''} onChange={(e) => set('dob', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>Phone<input style={input} autoComplete="tel" inputMode="tel" value={d.phone ?? ''} onChange={(e) => set('phone', e.target.value)} /></label>
         <label style={{ fontSize: 12 }}>Account type<select style={input} value={d.acctType ?? 'INDIVIDUAL'} onChange={(e) => set('acctType', e.target.value)}>
           {['INDIVIDUAL', 'JOINT', 'LLC', 'TRUST', 'IRA'].map((a) => <option key={a}>{a}</option>)}
         </select></label>
       </div></Card>}
 
       {step === 1 && <Card><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <label style={{ fontSize: 12, gridColumn: '1 / -1' }}>Street<input style={input} value={d.street ?? ''} onChange={(e) => set('street', e.target.value)} /></label>
-        <label style={{ fontSize: 12 }}>City<input style={input} value={d.city ?? ''} onChange={(e) => set('city', e.target.value)} /></label>
-        <label style={{ fontSize: 12 }}>Country<input style={input} value={d.country ?? ''} onChange={(e) => set('country', e.target.value)} /></label>
+        <label style={{ fontSize: 12, gridColumn: '1 / -1' }}>Street<input style={input} autoComplete="street-address" value={d.street ?? ''} onChange={(e) => set('street', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>City<input style={input} autoComplete="address-level2" value={d.city ?? ''} onChange={(e) => set('city', e.target.value)} /></label>
+        <label style={{ fontSize: 12 }}>Country<input style={input} autoComplete="country-name" value={d.country ?? ''} onChange={(e) => set('country', e.target.value)} /></label>
       </div></Card>}
 
       {step === 2 && <Card><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>

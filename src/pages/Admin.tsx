@@ -6,6 +6,8 @@ import type { AppUser, FundOffering, FundStatus, Indication, Article, Opportunit
 import { logs } from '../data/sample';
 import { fmtMoney } from '../components/OppCard';
 import { Pager, usePagination } from '../components/Tables';
+import { confirm } from '../components/Confirm';
+import { announce } from '../components/Live';
 import { Card, Empty } from '../components/Shell';
 
 function Denied() { return <Empty text="403 — admin, fund_manager or monitor only." />; }
@@ -86,7 +88,11 @@ function UserManager({ me }: { me: string }) {
                   <button className="chip" disabled={u._id === me} onClick={() => upsert('users', { ...u, status: u.status === 'active' ? 'deactivated' : 'active' })}>
                     {u.status === 'active' ? 'Deactivate' : 'Activate'}
                   </button>{' '}
-                  <button className="chip" disabled={u._id === me} onClick={() => remove('users', u._id)}>Delete</button>
+                  <button className="chip" disabled={u._id === me} onClick={async () => {
+                    if (await confirm({ title: `Delete ${u.firstName} ${u.lastName}?`, body: 'This removes the user immediately. This cannot be undone.', confirmLabel: 'Delete user', danger: true })) {
+                      remove('users', u._id); announce(`Deleted user ${u.emailId}.`);
+                    }
+                  }}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -219,7 +225,11 @@ function Cms() {
               <button className="chip" onClick={() => { upsert('articles', { ...a, status: a.status === 'published' ? 'draft' : 'published' }); }}>
                 {a.status === 'published' ? 'Unpublish' : 'Publish'}
               </button>
-              <button className="chip" onClick={() => remove('articles', a._id)}>Delete</button>
+              <button className="chip" onClick={async () => {
+                if (await confirm({ title: `Delete “${a.title}”?`, body: 'The article is removed immediately. This cannot be undone.', confirmLabel: 'Delete article', danger: true })) {
+                  remove('articles', a._id); announce(`Deleted article ${a.title}.`);
+                }
+              }}>Delete</button>
             </span>
           </div>
           {sel === a._id && (
@@ -324,7 +334,11 @@ export default function Admin() {
                 </div>
                 {!ro && <span style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
                   <button className="chip" onClick={() => { setEditFund(f._id); setAdding(false); }}>Edit</button>
-                  {f.status === 'draft' && <button className="chip" onClick={() => remove('funds', f._id)}>Delete</button>}
+                  {f.status === 'draft' && <button className="chip" onClick={async () => {
+                    if (await confirm({ title: `Delete draft “${f.fundName}”?`, body: 'The draft fund is removed immediately.', confirmLabel: 'Delete draft', danger: true })) {
+                      remove('funds', f._id); announce(`Deleted draft fund ${f.fundName}.`);
+                    }
+                  }}>Delete</button>}
                 </span>}
               </div>
             </Card>

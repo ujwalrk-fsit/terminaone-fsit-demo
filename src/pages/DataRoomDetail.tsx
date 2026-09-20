@@ -4,9 +4,11 @@ import { useSelector } from 'react-redux';
 import { Download, Eye, Lock, Plus, Search, Send } from 'lucide-react';
 import type { RootState } from '../store';
 import { useColl, upsert } from '../db';
+import { useQueryState } from '../url';
 import type { DataFile, DataFileType, DataFolder, FundOffering } from '../types';
 import { FOLDERS, canView, fmtSize, fundName, latest, roomActivity, actorName } from '../dataRoom';
 import { Pager, usePagination } from '../components/Tables';
+import { announce } from '../components/Live';
 import { StatusPill } from '../components/OppCard';
 import { Card, Empty } from '../components/Shell';
 
@@ -31,9 +33,9 @@ export default function DataRoomDetail() {
   const funds = useColl<FundOffering>('funds');
   const allFiles = useColl<DataFile>('datafiles');
   const fund = funds.find((f) => f._id === fundId);
-  const [folder, setFolder] = useState<'All' | DataFolder>('All');
-  const [q, setQ] = useState('');
-  const [status, setStatus] = useState('');
+  const [folder, setFolder] = useQueryState('folder', 'All');
+  const [q, setQ] = useQueryState('q');
+  const [status, setStatus] = useQueryState('status');
   const [sel, setSel] = useState<string | null>(null);
   const [requested, setRequested] = useState<string[]>([]);
   const [sessionActs, setSessionActs] = useState<{ action: string; target: string; createdAt: string }[]>([]);
@@ -66,6 +68,7 @@ export default function DataRoomDetail() {
       versions: [{ v: 1, uploadedBy: auth.user?.sub ?? 'you', uploadedAt: new Date().toISOString().slice(0, 10), note: 'Initial upload', sizeKb: 320 }],
     };
     upsert('datafiles', rec);
+    announce(`Published ${rec.title} version 1.`);
     setSessionActs((p) => [{ action: 'uploaded', target: rec.title, createdAt: rec.updatedAt }, ...p]);
     setShowUpload(false); setUp({ title: '', folder: 'Reports & Updates', type: 'PDF', note: '' });
   };

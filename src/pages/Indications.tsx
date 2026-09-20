@@ -4,18 +4,16 @@ import { useSelector } from 'react-redux';
 import { ArrowRight, Info } from 'lucide-react';
 import type { RootState } from '../store';
 import { useColl, upsert } from '../db';
+import { useQueryState } from '../url';
 import type { Indication, FundOffering, Opportunity, InvestorAccount } from '../types';
 import { priceSeries } from '../data/company';
 import { Card, Empty } from '../components/Shell';
 import { BankPanel, SignPad } from '../components/BankSign';
 import { Avatar, ExpandBtn, SortTh, TableTabs, Pager, Toolbar, toCsv, usePagination, useSort } from '../components/Tables';
+import { confirm } from '../components/Confirm';
+import { announce } from '../components/Live';
 import { actorName } from '../dataRoom';
-
-export function fmtCompact(n: number) {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1)}M`;
-  if (n >= 1_000) return `$${Math.round(n / 1_000)}K`;
-  return `$${n}`;
-}
+import { fmtCompact } from '../format';
 
 function vwap(id: string, ref: number) {
   const s = priceSeries(id, ref, ref * 0.72).slice(-90);
@@ -27,8 +25,8 @@ export function Indications() {
   const rows = useColl<Indication>('indications');
   const funds = useColl<FundOffering>('funds');
   const opportunities = useColl<Opportunity>('opportunities');
-  const [scope, setScope] = useState('Mine');
-  const [tq, setTq] = useState('');
+  const [scope, setScope] = useQueryState('scope', 'Mine');
+  const [tq, setTq] = useQueryState('q');
   const [open, setOpen] = useState<string | null>(null);
   const [editUnits, setEditUnits] = useState<Record<string, number>>({});
 
@@ -131,7 +129,12 @@ export function Indications() {
                       {cancellable ? (
                         <>
                           <button className="link-more" style={{ fontSize: 12 }} onClick={() => { setOpen(isOpen ? null : i._id); setEditUnits({ ...editUnits, [i._id]: i.numberOfUnits }); }}>Update</button>{' '}
-                          <button className="link-more" style={{ fontSize: 12, color: 'var(--danger)' }} onClick={() => upsert('indications', { ...i, status: 'REJECTED', updatedAt: new Date().toISOString().slice(0, 10) })}>Cancel</button>
+                          <button className="link-more" style={{ fontSize: 12, color: 'var(--danger)' }} onClick={async () => {
+                            if (await confirm({ title: `Cancel indication ${i._id}?`, body: 'The indication leaves the open book. This cannot be undone.', confirmLabel: 'Cancel indication', danger: true })) {
+                              upsert('indications', { ...i, status: 'REJECTED', updatedAt: new Date().toISOString().slice(0, 10) });
+                              announce(`Canceled indication ${i._id}.`);
+                            }
+                          }}>Cancel</button>
                         </>
                       ) : <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>{i.status}</span>}
                     </td>
@@ -194,6 +197,7 @@ export function IndicationNew() {
   const submit = () => {
     const rec: Indication = { _id: `i_${Date.now()}`, investorUserId: auth.user?.sub ?? 'u_inv1', investorAccountId: myAccounts[0]?._id ?? 'a_inv1', fundId, opportunityId: opp?._id, numberOfUnits: units, investmentAmount: amount, status: 'AWAITING_APPROVAL', createdAt: new Date().toISOString().slice(0, 10), updatedAt: new Date().toISOString().slice(0, 10), proofUrl: proof };
     upsert('indications', rec);
+    announce(`Indication submitted for ${fund.fundName}. Awaiting approval.`);
     setStep(6);
   };
 

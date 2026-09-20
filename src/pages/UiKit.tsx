@@ -14,8 +14,10 @@ const swatches: [string, string][] = [
   ['Ink', 'var(--text-strong)'],
   ['Stone', 'var(--text-subtle)'],
   ['Gain', 'var(--positive)'],
+  ['Gain text (AA)', 'var(--success-text)'],
   ['Loss', 'var(--negative)'],
   ['Warning', 'var(--warning)'],
+  ['Warning text (AA)', 'var(--warning-text)'],
   ['Pending', 'var(--pending)'],
   ['Hairline', 'var(--border-default)'],
 ];
@@ -63,7 +65,7 @@ export default function UiKit() {
           <button className="btn" disabled>Disabled</button>
           <a className="link-more" href="#/ui-kit">Text link <ArrowRight size={16} /></a>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 8 }}>Black pill = selection/secondary CTAs · Accent blue (white on deep, 6.7:1) = primary money actions · Blue is never a gain signal.</div>
+        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 8 }}>Black pill = selection/secondary CTAs · Accent blue (white on deep, 6.7:1) = primary money actions · Green/red text uses AA-graded text tokens — blue is never a gain signal.</div>
       </Card>
 
       <Card>
