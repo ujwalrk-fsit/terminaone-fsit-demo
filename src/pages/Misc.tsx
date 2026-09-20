@@ -4,11 +4,13 @@ import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useColl, upsert } from '../db';
 import type { Article, AppUser, RoleGroup } from '../types';
 import { login } from '../store';
 import { Card } from '../components/Shell';
 import { Markdown } from '../components/Markdown';
+import { BrandPanel } from './Login';
 
 export function Insights() {
   const articles = useColl<Article>('articles');
@@ -57,35 +59,47 @@ export function Signup() {
   const navigate = useNavigate();
   const users = useColl<AppUser>('users');
   const [err, setErr] = useState('');
+  const [show, setShow] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<SignupF>({ resolver: zodResolver(signupSchema) });
   return (
-    <div style={{ maxWidth: 440, margin: '32px auto', display: 'grid', gap: 14 }}>
-      <h1 className="page-h" style={{ textAlign: 'center' }}>Create account</h1>
-      <Card>
-        <form style={{ display: 'grid', gap: 10 }} onSubmit={handleSubmit((v) => {
-          if (users.some((u) => u.emailId === v.email.toLowerCase())) { setErr('An account with this email already exists.'); return; }
-          upsert('users', {
-            _id: `u_${Date.now()}`, firstName: v.firstName, lastName: v.lastName,
-            emailId: v.email.toLowerCase(), roleGroup: 'investor' as RoleGroup, roleId: 'r_investor',
-            status: 'pending', investorStatus: 'PENDING_ONBOARDING', password: v.password,
-          });
-          try { dispatch(login({ email: v.email, password: v.password })); } catch { setErr('Account created. Please log in.'); return; }
-          navigate('/onboarding');
-        })}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <input {...register('firstName')} style={{ padding: 10 }} placeholder="First name" />
-            <input {...register('lastName')} style={{ padding: 10 }} placeholder="Last name" />
+    <div className="auth-split">
+      <BrandPanel />
+      <div className="auth-form">
+        <div className="auth-card">
+          <div className="auth-word">TerminaOne</div>
+          <div className="auth-sub">Create account</div>
+          <form onSubmit={handleSubmit((v) => {
+            if (users.some((u) => u.emailId === v.email.toLowerCase())) { setErr('An account with this email already exists.'); return; }
+            upsert('users', {
+              _id: `u_${Date.now()}`, firstName: v.firstName, lastName: v.lastName,
+              emailId: v.email.toLowerCase(), roleGroup: 'investor' as RoleGroup, roleId: 'r_investor',
+              status: 'pending', investorStatus: 'PENDING_ONBOARDING', password: v.password,
+            });
+            try { dispatch(login({ email: v.email, password: v.password })); } catch { setErr('Account created. Please log in.'); return; }
+            navigate('/onboarding');
+          })}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+              <div className="auth-field"><input {...register('firstName')} placeholder="First name" aria-label="First name" /></div>
+              <div className="auth-field"><input {...register('lastName')} placeholder="Last name" aria-label="Last name" /></div>
+            </div>
+            <div className="auth-field"><input {...register('email')} placeholder="Email" aria-label="Email" /></div>
+            <div className="auth-field">
+              <input {...register('password')} type={show ? 'text' : 'password'} placeholder="Password (min 6)" aria-label="Password" style={{ paddingRight: 40 }} />
+              <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
+                {show ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {(errors.firstName || errors.lastName || errors.email || errors.password) && (
+              <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>Please complete all fields correctly.</div>
+            )}
+            {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+            <button className="btn btn-primary btn-block" style={{ height: 44 }}>Create account</button>
+          </form>
+          <div style={{ fontSize: 13, textAlign: 'center', marginTop: 18 }}>
+            Have an account?<br /><Link to="/auth/login" style={{ textDecoration: 'underline', color: 'var(--text-default)' }}>Log in</Link>
           </div>
-          <input {...register('email')} style={{ padding: 10 }} placeholder="Email" />
-          <input {...register('password')} type="password" style={{ padding: 10 }} placeholder="Password (min 6)" />
-          {(errors.firstName || errors.lastName || errors.email || errors.password) && (
-            <div style={{ fontSize: 12, color: 'var(--danger)' }}>Please complete all fields correctly.</div>
-          )}
-          {err && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{err}</div>}
-          <button className="btn btn-primary btn-block">Sign up</button>
-        </form>
-        <div style={{ marginTop: 10, fontSize: 13, textAlign: 'center' }}>Have an account? <Link to="/auth/login" className="link-more">Log in</Link></div>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
@@ -97,39 +111,52 @@ export function Forgot() {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [pw, setPw] = useState('');
+  const [show, setShow] = useState(false);
   const [err, setErr] = useState('');
   const CODE = '123456';
   return (
-    <div style={{ maxWidth: 440, margin: '32px auto', display: 'grid', gap: 14 }}>
-      <h1 className="page-h" style={{ textAlign: 'center' }}>Reset password</h1>
-      <Card>
-        {step === 0 && (
-          <div style={{ display: 'grid', gap: 10 }}>
-            <input style={{ padding: 10 }} placeholder="Account email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            {err && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{err}</div>}
-            <button className="btn btn-primary btn-block" onClick={() => {
-              if (!users.some((u) => u.emailId === email.toLowerCase())) { setErr('No account found for this email.'); return; }
-              setErr(''); setStep(1);
-            }}>Send code</button>
+    <div className="auth-split">
+      <BrandPanel />
+      <div className="auth-form">
+        <div className="auth-card">
+          <div className="auth-word">TerminaOne</div>
+          <div className="auth-sub">Reset password</div>
+          {step === 0 && (
+            <div>
+              <div className="auth-field"><input placeholder="Account email" aria-label="Account email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+              <button className="btn btn-primary btn-block" style={{ height: 44 }} onClick={() => {
+                if (!users.some((u) => u.emailId === email.toLowerCase())) { setErr('No account found for this email.'); return; }
+                setErr(''); setStep(1);
+              }}>Send code</button>
+            </div>
+          )}
+          {step === 1 && (
+            <div>
+              <div style={{ fontSize: 13, marginBottom: 10 }}>Enter the 6-digit code sent to <b>{email}</b>. (Reference build code: <b className="tnum">{CODE}</b>)</div>
+              <div className="auth-field"><input placeholder="123456" aria-label="Verification code" value={code} onChange={(e) => setCode(e.target.value)} /></div>
+              <div className="auth-field">
+                <input type={show ? 'text' : 'password'} placeholder="New password (min 6)" aria-label="New password" value={pw} onChange={(e) => setPw(e.target.value)} style={{ paddingRight: 40 }} />
+                <button type="button" className="eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
+                  {show ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
+              <button className="btn btn-primary btn-block" style={{ height: 44 }} onClick={() => {
+                const u = users.find((x) => x.emailId === email.toLowerCase());
+                if (!u) { setErr('No account found for this email.'); return; }
+                if (code.trim() !== CODE) { setErr('Incorrect code.'); return; }
+                if (pw.length < 6) { setErr('Password needs at least 6 characters.'); return; }
+                upsert('users', { ...u, password: pw });
+                navigate('/auth/login');
+              }}>Reset password</button>
+            </div>
+          )}
+          <div style={{ fontSize: 13, textAlign: 'center', marginTop: 18 }}>
+            <Link to="/auth/login" style={{ textDecoration: 'underline', color: 'var(--text-default)' }}>Back to log in</Link>
           </div>
-        )}
-        {step === 1 && (
-          <div style={{ display: 'grid', gap: 10 }}>
-            <div style={{ fontSize: 13 }}>Enter the 6-digit code sent to <b>{email}</b>. (Reference build code: <b className="tnum">{CODE}</b>)</div>
-            <input style={{ padding: 10 }} placeholder="123456" value={code} onChange={(e) => setCode(e.target.value)} />
-            <input style={{ padding: 10 }} type="password" placeholder="New password (min 6)" value={pw} onChange={(e) => setPw(e.target.value)} />
-            {err && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{err}</div>}
-            <button className="btn btn-primary btn-block" onClick={() => {
-              const u = users.find((x) => x.emailId === email.toLowerCase());
-              if (!u) { setErr('No account found for this email.'); return; }
-              if (code.trim() !== CODE) { setErr('Incorrect code.'); return; }
-              if (pw.length < 6) { setErr('Password needs at least 6 characters.'); return; }
-              upsert('users', { ...u, password: pw });
-              navigate('/auth/login');
-            }}>Reset password</button>
-          </div>
-        )}
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

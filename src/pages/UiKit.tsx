@@ -78,6 +78,20 @@ export default function UiKit() {
       </Card>
 
       <Card>
+        <h3 style={{ margin: '0 0 12px', color: 'var(--text-strong)' }}>Dense tables</h3>
+        <div className="dtable">
+          <table className="grid">
+            <thead><tr><th>Company ▲▼</th><th className="num">Price</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><b>Anduril</b></td><td className="num">$34.80</td><td><span className="pill pill-live">Live</span></td><td><a className="link-more" style={{ fontSize: 12 }} href="#/ui-kit">Update</a></td></tr>
+              <tr><td><b>Ripple</b></td><td className="num">$11.20</td><td><span className="sp-fail">Failed</span></td><td><a className="link-more" style={{ fontSize: 12 }} href="#/ui-kit">Update</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 8 }}>Rules: 12px rows, header tint, row hover, right-aligned numerics, sortable ▲▼ headers, inline status + actions.</div>
+      </Card>
+
+      <Card>
         <h3 style={{ margin: '0 0 12px', color: 'var(--text-strong)' }}>Type scale</h3>
         <div style={{ display: 'grid', gap: 8 }}>
           <div style={{ font: '700 clamp(28px,3.2vw,40px)/1.15 var(--font-display)', color: 'var(--text-strong)' }}>Display XL — Aa 123</div>

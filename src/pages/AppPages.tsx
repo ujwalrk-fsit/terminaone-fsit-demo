@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { useColl, upsert, remove, resetDb } from '../db';
@@ -7,6 +8,7 @@ import { dataActivity } from '../data/sample';
 import { actorName } from '../dataRoom';
 import { Card, Empty } from '../components/Shell';
 import { SignPad } from '../components/BankSign';
+import { SortTh, useSort } from '../components/Tables';
 import { useTheme, toggleTheme } from '../theme';
 
 const input = { padding: '8px 10px', width: '100%' } as const;
@@ -100,18 +102,41 @@ export function Documents() {
 
 export function Transfers() {
   const transfers = useColl<Transfer>('transfers');
+  const tGet = (t: Transfer, k: string): string | number =>
+    k === 'date' ? t.createdAt : k === 'amount' ? t.totalAmount : k === 'status' ? t.status : t.reference;
+  const [sorted, sk, dir, sort] = useSort(transfers, 'date', -1, tGet);
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       <div className="section-head" style={{ margin: 0 }}><h2>Transfers</h2><span className="pill pill-neutral">{transfers.length}</span></div>
-      {transfers.map((t) => (
-        <Card key={t._id}>
-          <div className="tnum" style={{ fontFamily: 'monospace', fontSize: 12 }}>
-            {t._id} · {t.reference} · ${t.totalAmount.toLocaleString()} {t.currency} · <b style={{ color: 'var(--text-strong)' }}>{t.status}</b>
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>{t.method} · {t.createdAt} · indication {t.indicationId}</div>
-        </Card>
-      ))}
-      {transfers.length === 0 && <Empty text="No transfers yet. Transfers appear here after you confirm a bank payment." />}
+      {sorted.length === 0 ? <Empty text="No transfers yet. Transfers appear here after you confirm a bank payment." /> : (
+        <div className="dtable">
+          <table className="grid" style={{ minWidth: 640 }}>
+            <thead><tr>
+              <th>Reference</th>
+              <SortTh label="Date" k="date" sk={sk} dir={dir} onSort={sort} />
+              <SortTh label="Amount" k="amount" sk={sk} dir={dir} onSort={sort} />
+              <th>Method</th>
+              <SortTh label="Status" k="status" sk={sk} dir={dir} onSort={sort} />
+              <th>Indication</th>
+            </tr></thead>
+            <tbody>
+              {sorted.map((t) => (
+                <tr key={t._id}>
+                  <td style={{ fontFamily: 'monospace' }}>{t.reference}</td>
+                  <td className="tnum">{t.createdAt}</td>
+                  <td className="tnum"><b>${t.totalAmount.toLocaleString()}</b> {t.currency}</td>
+                  <td>{t.method}</td>
+                  <td><span className={`pill ${t.status === 'SUCCEEDED' ? 'pill-live' : t.status === 'FAILED' ? 'pill-neutral' : 'pill-info'}`}>{t.status}</span></td>
+                  <td style={{ fontFamily: 'monospace', fontSize: 11 }}>{t.indicationId}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div style={{ fontSize: 12 }}>
+        <Link to="/indications/new" className="link-more">New bank transfer</Link>
+      </div>
     </div>
   );
 }

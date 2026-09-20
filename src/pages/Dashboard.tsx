@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight, Info } from 'lucide-react';
+import { SortTh, useSort } from '../components/Tables';
 import type { RootState } from '../store';
 import { useColl } from '../db';
 import type { FundOffering, Indication, InvestorAccount, Opportunity, Transfer } from '../types';
@@ -31,6 +32,16 @@ export default function Dashboard() {
   const bids = [...indications].sort((a, b) => b.investmentAmount - a.investmentAmount).slice(0, 4);
   const asks = [...opportunities.filter((o) => o.tsgPrice != null)].sort((a, b) => (b.tsgPrice ?? 0) - (a.tsgPrice ?? 0)).slice(0, 4);
   const watched = opportunities.filter((o) => watchIds.includes(o._id));
+  const wrows = watched.map((o) => ({ o, ...bidAskFor(o) }));
+  const wGet = (r: { o: Opportunity } & ReturnType<typeof bidAskFor>, k: string): string | number => {
+    if (k === 'company') return r.o.name;
+    if (k === 'bid') return r.high ?? -1;
+    if (k === 'ask') return r.ask ?? -1;
+    if (k === 'vwap') return r.w ?? -1;
+    if (k === 'price') return r.o.tsgPrice ?? -1;
+    return '';
+  };
+  const [wsorted, wsk, wdir, wsort] = useSort(wrows, 'price', -1, wGet);
   const queue = indications.filter((i) => ['AWAITING_APPROVAL', 'AWAITING_SIGNATURE', 'SUBSCRIBED', 'PAYMENT_PROCESSING'].includes(i.status));
   const txns = transfers.slice(0, 4);
   const oppOf = (i: Indication) => opportunities.find((o) => o._id === i.opportunityId) ?? opportunities.find((o) => o.fundId === i.fundId);
@@ -136,7 +147,7 @@ export default function Dashboard() {
           <span style={{ color: 'var(--text-subtle)' }}>{queue.length} Updated IOIs</span>
         </div>
         {txns.length === 0 ? <Empty text="No transactions yet." /> : (
-          <div style={{ overflowX: 'auto', marginTop: 6 }}>
+          <div style={{ overflowX: 'auto', marginTop: 6 }} className="dtable">
             <table className="grid compact-table" style={{ minWidth: 720 }}>
               <thead><tr><th>Company</th><th>Date</th><th>Transaction Size</th><th>Price</th><th>Quantity</th><th>Price vs 90-Day VWAP</th><th>Actions</th></tr></thead>
               <tbody>
@@ -171,21 +182,29 @@ export default function Dashboard() {
           <Link to="/watchlist" className="btn btn-ghost" style={{ marginLeft: 'auto' }}>Manage</Link>
         </div>
         {watched.length === 0 ? <Empty text="Your watchlist is empty. Add companies from any opportunity page." /> : (
-          <div style={{ overflowX: 'auto', marginTop: 6 }}>
+          <div style={{ overflowX: 'auto', marginTop: 6 }} className="dtable">
             <table className="grid compact-table" style={{ minWidth: 860 }}>
-              <thead><tr><th>Company</th><th>Sector</th><th>Highest Bid</th><th>Lowest Ask</th><th>% vs LFR <Info size={11} style={{ display: 'inline' }} /></th><th>90-Day VWAP</th><th>TSG Price</th><th>Actions</th></tr></thead>
+              <thead><tr>
+                <SortTh label="Company" k="company" sk={wsk} dir={wdir} onSort={wsort} />
+                <th>Sector</th>
+                <SortTh label="Highest Bid" k="bid" sk={wsk} dir={wdir} onSort={wsort} />
+                <SortTh label="Lowest Ask" k="ask" sk={wsk} dir={wdir} onSort={wsort} />
+                <th>% vs LFR <Info size={11} style={{ display: 'inline' }} /></th>
+                <SortTh label="90-Day VWAP" k="vwap" sk={wsk} dir={wdir} onSort={wsort} />
+                <SortTh label="TSG Price" k="price" sk={wsk} dir={wdir} onSort={wsort} />
+                <th>Actions</th>
+              </tr></thead>
               <tbody>
-                {watched.map((o) => {
-                  const m = bidAskFor(o);
-                  const vsLfr = m.lfr && o.tsgPrice ? ((o.tsgPrice - m.lfr) / m.lfr) * 100 : null;
+                {wsorted.map(({ o, high, ask, lfr, w }) => {
+                  const vsLfr = lfr && o.tsgPrice ? ((o.tsgPrice - lfr) / lfr) * 100 : null;
                   return (
                     <tr key={o._id}>
                       <td><Link to={`/opportunities/${o._id}`} style={{ fontWeight: 700, color: 'var(--text-strong)', textDecoration: 'none' }}>{o.name}</Link></td>
                       <td>{o.sector}</td>
-                      <td className="tnum">{m.high != null ? `$${m.high.toFixed(2)}` : '—'}</td>
-                      <td className="tnum">{m.ask != null ? `$${m.ask.toFixed(2)}` : '—'}</td>
+                      <td className="tnum">{high != null ? `$${high.toFixed(2)}` : '—'}</td>
+                      <td className="tnum">{ask != null ? `$${ask.toFixed(2)}` : '—'}</td>
                       <td className={`tnum ${vsLfr != null && vsLfr >= 0 ? 'up' : 'down'}`}>{vsLfr != null ? `${vsLfr >= 0 ? '+' : ''}${vsLfr.toFixed(0)}%` : '—'}</td>
-                      <td className="tnum">{m.w != null ? `$${m.w.toFixed(2)}` : '—'}</td>
+                      <td className="tnum">{w != null ? `$${w.toFixed(2)}` : '—'}</td>
                       <td className="tnum"><b>${o.tsgPrice?.toFixed(2) ?? '—'}</b></td>
                       <td style={{ whiteSpace: 'nowrap' }}>
                         <Link to={`/indications/new?opp=${o._id}`} className="link-more" style={{ fontSize: 12 }}>Submit IOI</Link>{' '}

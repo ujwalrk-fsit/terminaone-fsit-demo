@@ -128,9 +128,9 @@ export default function DataRoomDetail() {
             </select>
           </div>
 
-          {list.length === 0 ? <Empty text="No documents match (edge case)." /> : (
-            <Card>
-              <table className="grid">
+          {list.length === 0 ? <Empty text="No documents match." /> : (
+            <div className="dtable">
+              <table className="grid" style={{ minWidth: 780 }}>
                 <thead><tr><th>Document</th><th>Ver</th><th>Size</th><th>Updated</th><th>Status</th><th>Access</th><th /></tr></thead>
                 <tbody>
                   {list.map((f) => {
@@ -165,7 +165,7 @@ export default function DataRoomDetail() {
                   })}
                 </tbody>
               </table>
-            </Card>
+            </div>
           )}
 
           {selected && (

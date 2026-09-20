@@ -67,7 +67,7 @@ function UserManager({ me }: { me: string }) {
   const [form, setForm] = useState({ firstName: '', lastName: '', emailId: '', roleGroup: 'investor' as RoleGroup, password: 'welcome123' });
   return (
     <div style={{ display: 'grid', gap: 8 }}>
-      <Card>
+      <div className="dtable">
         <table className="grid"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th /></tr></thead>
           <tbody>
             {users.map((u) => (
@@ -89,7 +89,7 @@ function UserManager({ me }: { me: string }) {
               </tr>
             ))}
           </tbody></table>
-      </Card>
+      </div>
       <Card>
         <H>Add user</H>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8 }}>
@@ -346,11 +346,13 @@ export default function Admin() {
       {tab === 'market' && (ro ? <Empty text="Read-only role." /> : <MarketData />)}
 
       {tab === 'logs' && (
-        <Card>
-          <table className="grid"><thead><tr><th>Module</th><th>Action</th><th>By</th><th>At</th></tr></thead>
-            <tbody>{logs.map((l) => <tr key={l._id}><td>{l.module}</td><td>{l.action}</td><td style={{ fontFamily: 'monospace' }}>{l.performedBy}</td><td>{l.createdAt}</td></tr>)}</tbody></table>
+        <div>
+          <div className="dtable">
+            <table className="grid"><thead><tr><th>Module</th><th>Action</th><th>By</th><th>At</th></tr></thead>
+              <tbody>{logs.map((l) => <tr key={l._id}><td>{l.module}</td><td>{l.action}</td><td style={{ fontFamily: 'monospace' }}>{l.performedBy}</td><td>{l.createdAt}</td></tr>)}</tbody></table>
+          </div>
           <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text-subtle)' }}>Audit trail retained for 3 years.</div>
-        </Card>
+        </div>
       )}
     </div>
   );
