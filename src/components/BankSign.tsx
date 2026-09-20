@@ -3,15 +3,15 @@ import type { BankDetails } from '../types';
 
 const dt = { color: 'var(--text-subtle)' };
 
-// Back-office bank panel (read-only for investor) + investor confirm + proof upload (mock).
+// Back-office bank panel (read-only for investor) + investor confirm + proof upload.
 export function BankPanel({ bank, indicationId, onConfirmed }: { bank?: BankDetails; indicationId: string; onConfirmed: (proofUrl: string) => void }) {
   const [proof, setProof] = useState<string>('');
   const [done, setDone] = useState(false);
-  if (!bank) return <div style={{ border: '1px dashed var(--border-default)', borderRadius: 8, padding: 16, fontSize: 13, color: 'var(--text-muted)' }}>Bank details not yet uploaded by back office (mock). This opportunity cannot accept transfers.</div>;
+  if (!bank) return <div style={{ border: '1px dashed var(--border-default)', borderRadius: 8, padding: 16, fontSize: 13, color: 'var(--text-muted)' }}>Bank details are published by the back office for each opportunity. Transfers below cannot be completed until details are available.</div>;
   const masked = bank.accountNumber.length > 4 ? `••••${bank.accountNumber.slice(-4)}` : bank.accountNumber;
   return (
     <div style={{ display: 'grid', gap: 12, border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 16, fontSize: 13 }}>
-      <div style={{ font: '700 14px var(--font-display)', color: '#fff' }}>Manual bank transfer (replaces card/Stripe in mock)</div>
+      <div style={{ font: '700 14px var(--font-display)', color: 'var(--text-strong)' }}>Manual bank transfer</div>
       <dl style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 8, margin: 0 }}>
         <dt style={dt}>Bank</dt><dd style={{ margin: 0 }}>{bank.bankName}</dd>
         <dt style={dt}>Account</dt><dd style={{ margin: 0 }}>{bank.accountName} ({masked})</dd>
@@ -20,7 +20,7 @@ export function BankPanel({ bank, indicationId, onConfirmed }: { bank?: BankDeta
         <dt style={dt}>Reference</dt><dd style={{ margin: 0, fontFamily: 'monospace' }}>REF-{indicationId}</dd>
       </dl>
       <p style={{ margin: 0, color: 'var(--text-muted)' }}>{bank.instructions}</p>
-      <label style={{ display: 'block' }}>Transfer proof (mock upload, stored locally)
+      <label style={{ display: 'block' }}>Transfer proof
         <input type="file" accept="image/*,.pdf" style={{ display: 'block', marginTop: 6 }} onChange={(e) => {
           const f = e.target.files?.[0];
           if (!f) return;
@@ -30,7 +30,7 @@ export function BankPanel({ bank, indicationId, onConfirmed }: { bank?: BankDeta
       {proof && <div style={{ fontSize: 12 }}>Attached: <a href={proof} target="_blank" rel="noreferrer" className="link-more">view proof</a></div>}
       <div><button disabled={!proof || done} className="btn btn-primary"
         onClick={() => { onConfirmed(proof); setDone(true); }}>
-        {done ? 'Transfer marked (mock)' : 'I have transferred'}
+        {done ? 'Transfer marked for review' : 'I have transferred'}
       </button></div>
     </div>
   );
@@ -81,7 +81,7 @@ export function SignPad({ onSign }: { onSign: (dataUrl: string, mode: string) =>
           const r = new FileReader(); r.onload = () => onSign(String(r.result), 'upload'); r.readAsDataURL(f);
         }} />
       )}
-      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-subtle)' }}>Stored locally as dataURL (mock). Multi-party order enforced by parent flow.</p>
+      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-subtle)' }}>Signatures follow the order investor → advisor → fund manager.</p>
     </div>
   );
 }

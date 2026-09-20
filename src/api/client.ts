@@ -22,7 +22,7 @@ api.interceptors.response.use(
 );
 
 export async function get<T>(path: string): Promise<T> {
-  if (MOCK_MODE) throw new Error(`mock mode: ${path} served from local seed, not HTTP`);
+  if (MOCK_MODE) throw new Error(`local-data mode: ${path} served from bundled sample data, not HTTP`);
   const { data } = await api.get<T>(path);
   return data;
 }

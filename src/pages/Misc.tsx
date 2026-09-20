@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Card } from '../components/Shell';
 import { Markdown } from '../components/Markdown';
-import { articles } from '../mocks/seed';
+import { articles } from '../data/sample';
 
 export function Insights() {
   const pub = articles.filter((a) => a.status === 'published');
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">Insights (mock CMS)</h1>
+      <h1 className="text-2xl font-extrabold" style={{ color: 'var(--text-strong)' }}>Insights</h1>
       <div className="grid gap-4 md:grid-cols-2">
         {pub.map((a) => <Card key={a._id}><Link to={`/insights/${a._id}`} className="font-bold">{a.title}</Link><div className="text-xs">{a.category}</div></Card>)}
       </div>

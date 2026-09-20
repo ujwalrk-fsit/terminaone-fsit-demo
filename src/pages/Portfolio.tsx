@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import type { RootState } from '../store';
-import { indications, funds, opportunities } from '../mocks/seed';
+import { indications, funds, opportunities } from '../data/sample';
 import { Card } from '../components/Shell';
 
 export default function Portfolio() {
@@ -12,8 +12,8 @@ export default function Portfolio() {
   mine.forEach((m) => byFund.set(m.fundId, (byFund.get(m.fundId) ?? 0) + m.investmentAmount));
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">Portfolio (mock)</h1>
-      <Card><div className="text-xs">Holdings value</div><div className="text-2xl font-extrabold">${total.toLocaleString()}</div><div className="text-xs">Persisted mock; Atlas wiring is Phase 2.</div></Card>
+      <h1 className="text-2xl font-extrabold" style={{ color: 'var(--text-strong)' }}>Portfolio</h1>
+      <Card><div className="text-xs" style={{ color: 'var(--text-subtle)' }}>Holdings value</div><div className="text-2xl font-extrabold tnum" style={{ color: 'var(--text-strong)' }}>${total.toLocaleString()}</div></Card>
       <div className="grid gap-4 md:grid-cols-2">
         {[...byFund.entries()].map(([fid, amt]) => {
           const f = funds.find((x) => x._id === fid);

@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { opportunities, funds, indications } from '../mocks/seed';
+import { opportunities, funds, indications } from '../data/sample';
 import { Empty } from '../components/Shell';
 import { StatusPill, fmtMoney } from '../components/OppCard';
 import { toggle, type RootState } from '../store';
@@ -23,7 +23,7 @@ export default function OpportunityDetail() {
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <h1 style={{ font: '700 28px/34px var(--font-display)', color: '#fff', margin: 0 }}>{o.name}</h1>
+        <h1 style={{ font: '700 28px/34px var(--font-display)', color: 'var(--text-strong)', margin: 0 }}>{o.name}</h1>
         {fund ? <StatusPill status={fund.status} /> : <span className="pill pill-neutral">{o.activity}</span>}
         <span className="pill pill-neutral">{o.sector} / {o.subSector}</span>
         <button onClick={() => dispatch(toggle(o._id))} className="chip" style={{ marginLeft: 'auto' }}>{inWatch ? '★ Watching' : '☆ Watch'}</button>
@@ -32,22 +32,22 @@ export default function OpportunityDetail() {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16 }} className="detail-grid">
         <div className="card">
           <div style={{ fontSize: 11, color: 'var(--text-subtle)' }}>TSG PRICE (DERIVED, MOCK)</div>
-          <div className="tnum" style={{ font: '700 28px/34px var(--font-display)', color: '#fff' }}>{o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'Not available'}</div>
+          <div className="tnum" style={{ font: '700 28px/34px var(--font-display)', color: 'var(--text-strong)' }}>{o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'Not available'}</div>
           <div className="tnum" style={{ fontSize: 12, color: 'var(--text-muted)' }}>1Y: {o.priceChange1Y ?? '—'}% · QoQ: {o.latestQoQ ?? '—'}% · Bids: {book.length}</div>
           <div style={{ height: 192, marginTop: 8 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chart} margin={{ top: 4, right: 4, bottom: 0, left: -28 }}>
-                <CartesianGrid stroke="rgba(255,255,255,.06)" vertical={false} />
+                <CartesianGrid stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="name" tick={{ fill: '#8A8CA8', fontSize: 10 }} axisLine={false} tickLine={false} interval={1} />
                 <YAxis tick={{ fill: '#8A8CA8', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: '#1A1B3A', border: '1px solid rgba(154,98,243,.3)', borderRadius: 8, color: '#fff' }} />
+                <Tooltip contentStyle={{ background: '#1A1B3A', border: '1px solid rgba(154,98,243,.3)', borderRadius: 8, color: 'var(--text-strong)' }} />
                 <Line type="monotone" dataKey="v" stroke="#9A62F3" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
         <div className="card">
-          <div style={{ font: '700 16px/22px var(--font-display)', color: '#fff' }}>Funding & details</div>
+          <div style={{ font: '700 16px/22px var(--font-display)', color: 'var(--text-strong)' }}>Funding & details</div>
           <div style={{ marginTop: 8, fontSize: 13 }}>Last round: {o.lastRound ? `${o.lastRound.round} · ${o.lastRound.date} · $${(o.lastRound.valuation / 1e9).toFixed(1)}B · $${o.lastRound.pps}/share` : '—'}</div>
           <p style={{ marginTop: 8, fontSize: 13, color: 'var(--text-muted)' }}>{o.description}</p>
           {fund && (
@@ -55,9 +55,9 @@ export default function OpportunityDetail() {
               <div className="progress" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
               <div className="tnum" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 13 }}>
                 <span><strong style={{ color: 'var(--signal)' }}>{fmtMoney(fund.raised ?? 0)}</strong> <span style={{ color: 'var(--text-muted)' }}>raised</span></span>
-                <span><strong style={{ color: '#fff' }}>{fmtMoney(fund.offeringSize)}</strong> <span style={{ color: 'var(--text-muted)' }}>offering</span></span>
+                <span><strong style={{ color: 'var(--text-strong)' }}>{fmtMoney(fund.offeringSize)}</strong> <span style={{ color: 'var(--text-muted)' }}>offering</span></span>
               </div>
-              <div style={{ marginTop: 8, fontSize: 13 }}>Linked fund: <strong style={{ color: '#fff' }}>{fund.fundName}</strong> · min ${fund.minimumInvestment.toLocaleString()}</div>
+              <div style={{ marginTop: 8, fontSize: 13 }}>Linked fund: <strong style={{ color: 'var(--text-strong)' }}>{fund.fundName}</strong> · min ${fund.minimumInvestment.toLocaleString()}</div>
             </>
           )}
           <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
@@ -67,24 +67,24 @@ export default function OpportunityDetail() {
       </div>
 
       <div className="card">
-        <div style={{ font: '700 16px/22px var(--font-display)', color: '#fff' }}>Order book <span style={{ font: '400 12px var(--font-body)', color: 'var(--text-muted)' }}>(mock indications)</span></div>
+          <div style={{ font: '700 16px/22px var(--font-display)', color: 'var(--text-strong)' }}>Order book</div>
         {book.length === 0 ? <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 8 }}>No bids yet — be the first (edge case).</div> :
           <table className="grid" style={{ marginTop: 8 }}><thead><tr><th>ID</th><th>Units</th><th>Amount</th><th>Status</th></tr></thead>
           <tbody>{book.map((b) => <tr key={b._id}><td style={{ fontFamily: 'monospace' }}>{b._id}</td><td className="tnum">{b.numberOfUnits}</td><td className="tnum">${b.investmentAmount.toLocaleString()}</td><td>{b.status}</td></tr>)}</tbody></table>}
       </div>
 
       <div className="card">
-        <div style={{ font: '700 16px/22px var(--font-display)', color: '#fff' }}>Transfer notes & FAQs (mock)</div>
-        <ul style={{ paddingLeft: 20, fontSize: 13, color: 'var(--text-muted)' }}><li>Transfers subject to fund approval (mock).</li><li>Bank transfer only; no cards in this build.</li><li>Lock-up and eligibility per offering memo.</li></ul>
+        <div style={{ font: '700 16px/22px var(--font-display)', color: 'var(--text-strong)' }}>Transfer notes & FAQs</div>
+        <ul style={{ paddingLeft: 20, fontSize: 13, color: 'var(--text-muted)' }}><li>Transfers subject to fund approval.</li><li>Bank transfer only; no cards accepted.</li><li>Lock-up and eligibility per offering memo.</li></ul>
       </div>
 
-      <div className="risk-note"><b>Contextual risk:</b> secondary interests carry transfer restrictions and corporate actions (mock). Review the offering memo with your advisor before expressing interest.</div>
+      <div className="risk-note"><b>Contextual risk:</b> secondary interests carry transfer restrictions and corporate actions. Review the offering memo with your advisor before expressing interest.</div>
 
       {similar.length > 0 && (
         <div>
-          <div style={{ marginBottom: 8, font: '700 16px var(--font-display)', color: '#fff' }}>Similar opportunities</div>
+          <div style={{ marginBottom: 8, font: '700 16px var(--font-display)', color: 'var(--text-strong)' }}>Similar opportunities</div>
           <div className="grid-posts">{similar.map((s) => (
-            <div className="card" key={s._id}><Link to={`/opportunities/${s._id}`} style={{ font: '700 15px var(--font-display)', color: '#fff', textDecoration: 'none' }}>{s.name}</Link><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.subSector}</div></div>
+            <div className="card" key={s._id}><Link to={`/opportunities/${s._id}`} style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none' }}>{s.name}</Link><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.subSector}</div></div>
           ))}</div>
         </div>
       )}

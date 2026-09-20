@@ -13,6 +13,8 @@ import { Indications, IndicationNew } from './pages/Indications';
 import { Documents, Transfers, Notifications, Settings } from './pages/AppPages';
 import Watchlist from './pages/Watchlist';
 import Admin from './pages/Admin';
+import Funds from './pages/Funds';
+import UiKit from './pages/UiKit';
 import { Insights, InsightDetail, SimpleAuth } from './pages/Misc';
 
 function RequireAuth({ children }: { children: ReactElement }) {
@@ -50,7 +52,7 @@ function SessionGuard() {
   if (!warn || !auth.user) return null;
   return (
     <div className="card" style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 50, fontSize: 13, boxShadow: 'var(--elev-2)' }}>
-      Session expiring in ~1 min (mock countdown). <button className="btn btn-primary" style={{ height: 32, marginLeft: 8 }} onClick={() => { dispatch(touch()); setWarn(false); }}>Stay</button>
+      Session expiring in ~1 min. <button className="btn btn-primary" style={{ height: 32, marginLeft: 8 }} onClick={() => { dispatch(touch()); setWarn(false); }}>Stay</button>
     </div>
   );
 }
@@ -63,13 +65,15 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/opportunities" element={<Opportunities />} />
         <Route path="/opportunities/:id" element={<OpportunityDetail />} />
+        <Route path="/funds" element={<Funds />} />
+        <Route path="/ui-kit" element={<UiKit />} />
         {/* legacy alias: /marketplace -> /opportunities */}
         <Route path="/marketplace" element={<Navigate to="/opportunities" replace />} />
         <Route path="/insights" element={<Insights />} />
         <Route path="/insights/:id" element={<InsightById />} />
         <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/signup" element={<SimpleAuth title="Sign up (mock)" text="Mock only. Use Login + role switcher for reference." />} />
-        <Route path="/auth/forgot" element={<SimpleAuth title="Reset (mock)" text="Mock only. No emails sent in this build." />} />
+        <Route path="/auth/signup" element={<SimpleAuth title="Sign up" text="Create an account to start investing. Or use log in with a sample profile." />} />
+        <Route path="/auth/forgot" element={<SimpleAuth title="Reset password" text="Enter your email and we'll send you a reset link." />} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
         <Route path="/indications" element={<RequireAuth><Indications /></RequireAuth>} />

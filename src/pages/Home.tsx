@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowRight, CheckCircle2, Mail, Phone } from 'lucide-react';
-import { funds, opportunities, articles, users } from '../mocks/seed';
+import { funds, opportunities, articles, users } from '../data/sample';
 import type { RootState } from '../store';
 import { OppCard } from '../components/OppCard';
 
 function HeroBadge() {
   return (
-    <span className="pill pill-success badge">
-      <CheckCircle2 size={14} /> Full Access Approved
-    </span>
+    <div className="badge-row">
+      <span className="pill pill-success">
+        <CheckCircle2 size={14} /> Full Access Approved
+      </span>
+    </div>
   );
 }
 
@@ -81,26 +83,11 @@ export default function Home() {
   return (
     <div style={{ display: 'grid', gap: 32 }}>
       <section className="hero">
-        <svg className="hero__rays" viewBox="0 0 800 300" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="ray" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0" stopColor="#fff" stopOpacity="0" />
-              <stop offset=".6" stopColor="#fff" stopOpacity=".55" />
-              <stop offset="1" stopColor="#fff" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <g stroke="url(#ray)" fill="none" strokeLinecap="round">
-            <path d="M300 300 L800 70" strokeWidth="1.5" />
-            <path d="M380 300 L800 110" strokeWidth="1" />
-            <path d="M460 300 L800 150" strokeWidth="2" opacity=".7" />
-            <path d="M540 300 L800 190" strokeWidth="1" opacity=".5" />
-          </g>
-        </svg>
         {auth.user && <HeroBadge />}
         <div className="hero-grid">
           <div>
             <h1>Welcome back, {first}.<br />You&apos;re investment ready!</h1>
-            <p className="sub">Explore opportunities and start investing today. {liveCount} live funds · {opportunities.length} tracked opportunities (mock).</p>
+            <p className="sub">Explore opportunities and start investing today. {liveCount} live funds · {opportunities.length} tracked opportunities.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
               <Link to="/opportunities" className="btn btn-inverse">Explore opportunities</Link>
               {!auth.user && <Link to="/auth/login" className="btn btn-ghost">Log in</Link>}

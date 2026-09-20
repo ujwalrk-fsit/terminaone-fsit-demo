@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { opportunities, funds } from '../mocks/seed';
+import { opportunities, funds } from '../data/sample';
 import { OppCard } from '../components/OppCard';
 import { Empty } from '../components/Shell';
 
@@ -32,7 +32,7 @@ export default function Opportunities() {
           {list.map((o) => <OppCard key={o._id} opp={o} fund={funds.find((f) => f._id === o.fundId)} />)}
         </div>
       )}
-      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures here are synthetic mock data for design reference — not investment advice.</div>
+      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative — not investment advice.</div>
     </div>
   );
 }

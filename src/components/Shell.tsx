@@ -1,7 +1,13 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Bell, Search } from 'lucide-react';
+import {
+  Bell, Search, Building2, LayoutGrid, Star, Landmark,
+  Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
+  Moon, ShieldCheck, LogOut, UserRound,
+} from 'lucide-react';
 import { logout, type RootState } from '../store';
+import { Menu } from './Menu';
+import { toggleTheme, useTheme } from '../theme';
 
 function initials(email: string) {
   const name = email.split('@')[0];
@@ -9,70 +15,103 @@ function initials(email: string) {
   return ((parts[0]?.[0] ?? 'T') + (parts[1]?.[0] ?? 'O')).toUpperCase();
 }
 
+const icon = (el: React.ReactNode) => <span style={{ display: 'inline-flex' }}>{el}</span>;
+
 export function Shell({ children }: { children: React.ReactNode }) {
   const auth = useSelector((s: RootState) => s.auth);
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const loc = useLocation();
+  const theme = useTheme();
   const isAdmin = auth.user && ['admin', 'fund_manager', 'monitor'].includes(auth.user.roleGroup);
-  const link = ({ isActive }: { isActive: boolean }) => (isActive ? 'active' : '');
+  const exploring = loc.pathname.startsWith('/opportunities') || loc.pathname.startsWith('/funds') || loc.pathname === '/watchlist';
+  const active = loc.pathname.startsWith('/indications') || loc.pathname.startsWith('/portfolio') || loc.pathname.startsWith('/transactions') || loc.pathname.startsWith('/documents');
+
+  const exploreItems = [
+    { icon: icon(<LayoutGrid size={18} />), title: 'Market Opportunities', desc: 'Find active opportunities to invest in', to: '/opportunities' },
+    { icon: icon(<Building2 size={18} />), title: 'Browse Companies', desc: 'Explore our curated list of private companies', to: '/opportunities' },
+    { icon: icon(<Star size={18} />), title: 'Watchlist', desc: 'Track the private companies that matter to you', to: '/watchlist' },
+    { icon: icon(<Landmark size={18} />), title: 'Fund Offerings', desc: 'See current opportunities to buy funds', to: '/funds' },
+  ];
+  const activityItems = [
+    { icon: icon(<Briefcase size={18} />), title: 'My Holdings', desc: 'View and manage your holdings', to: '/portfolio' },
+    { icon: icon(<ArrowLeftRight size={18} />), title: 'My Bids & Asks', desc: 'View and manage your active bids and asks', to: '/indications' },
+    { icon: icon(<Repeat size={18} />), title: 'My Counter Offers', desc: 'Review all counter offers you\u2019ve received or submitted', to: '/indications' },
+    { icon: icon(<ReceiptText size={18} />), title: 'My Trades', desc: 'Monitor progress and history across all your transactions', to: '/transactions' },
+    { icon: icon(<FileCheck2 size={18} />), title: 'My Offerings', desc: 'View offering activity and updates', to: '/documents' },
+  ];
 
   return (
     <div style={{ minHeight: '100vh' }}>
       <header className="t-header">
         <div className="t-container" style={{ height: 64, display: 'flex', alignItems: 'center', gap: 24 }}>
-          <Link to="/" style={{ font: '800 18px var(--font-display)', color: '#fff', textDecoration: 'none', letterSpacing: '.04em' }}>
-            TERMINA<span style={{ color: 'var(--primary-400)' }}>ONE</span>
+          <Link to="/" style={{ font: '800 18px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 15 }}>T</span>
+            TERMINAONE
           </Link>
-          <div style={{ position: 'relative' }} className="hide-md">
-            <Search size={16} color="#fff" style={{ position: 'absolute', left: 12, top: 12 }} />
-            <input className="t-search" placeholder="Search funds, investments, etc." aria-label="Search" />
+          <div className="t-search-wrap hide-md">
+            <Search size={16} />
+            <input className="t-search" placeholder="Search for companies" aria-label="Search" />
           </div>
-          <nav className="t-nav hide-md" style={{ display: 'flex', gap: 32 }}>
+          <nav className="t-nav hide-md">
             {auth.user ? (
               <>
-                <NavLink to="/dashboard" className={link}>Dashboard</NavLink>
-                <NavLink to="/opportunities" className={link}>Explore</NavLink>
-                <NavLink to="/indications" className={link}>Activities</NavLink>
-                {isAdmin && <NavLink to="/admin" className={link}>Admin</NavLink>}
+                <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
+                <Menu label="Explore" items={exploreItems} active={exploring} />
+                <Menu label="My Activity" items={activityItems} active={active} />
+                {isAdmin && <NavLink to="/admin" className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink>}
               </>
             ) : (
               <>
-                <NavLink to="/opportunities" className={link}>Explore</NavLink>
-                <NavLink to="/insights" className={link}>Insights</NavLink>
-                <NavLink to="/auth/login" className={link}>Log In</NavLink>
+                <Menu label="Explore" items={exploreItems.slice(0, 2).concat(exploreItems.slice(3))} />
+                <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>Insights</NavLink>
               </>
             )}
           </nav>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
             {auth.user ? (
               <>
+                <Link to="/indications/new" className="btn btn-outline hide-md" style={{ height: 36 }}>Buy Or Sell</Link>
                 <Link to="/notifications" className="t-iconbtn" aria-label="Notifications">
                   <Bell size={18} />
                   <span className="t-dot" />
                 </Link>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className="t-avatar">{initials(auth.user.email)}</span>
-                  <span style={{ lineHeight: 1.3 }}>
-                    <span style={{ display: 'block', font: '700 12px/16px var(--font-display)', color: '#fff' }}>
-                      {auth.user.email.split('@')[0]}
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, font: '400 11px/14px var(--font-body)', color: 'var(--text-subtle)' }}>
-                      <span style={{ color: '#fff' }}>★</span> {auth.user.roleGroup}
-                    </span>
-                  </span>
-                </div>
-                <button className="btn btn-ghost" style={{ height: 36 }} onClick={() => { dispatch(logout()); nav('/'); }}>Logout</button>
+                <Menu
+                  align="right"
+                  label={<span className="t-avatar">{initials(auth.user.email)}</span>}
+                  items={[
+                    {
+                      title: (
+                        <span>
+                          <span style={{ display: 'block', color: 'var(--text-strong)' }}>{auth.user.email.split('@')[0]}</span>
+                          <span style={{ display: 'block', font: '400 12px var(--font-body)', color: 'var(--text-muted)' }}>{auth.user.email} · {auth.user.roleGroup}</span>
+                          <span className="btn btn-ghost btn-block" style={{ marginTop: 8, pointerEvents: 'none' }}>Manage My Profile</span>
+                        </span>
+                      ),
+                      to: '/settings',
+                    },
+                    { icon: icon(<Moon size={16} />), title: theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode', onClick: toggleTheme },
+                    { icon: icon(<ShieldCheck size={16} />), title: 'Security center', to: '/settings' },
+                    { icon: icon(<LogOut size={16} />), title: 'Log out', onClick: () => { dispatch(logout()); nav('/'); } },
+                  ]}
+                />
               </>
             ) : (
-              <Link to="/auth/login" className="btn btn-primary" style={{ height: 36 }}>Sign up</Link>
+              <>
+                <NavLink to="/auth/login" className="link-more hide-md">Log In</NavLink>
+                <Link to="/auth/login" className="btn btn-primary" style={{ height: 36 }}>Sign up</Link>
+              </>
             )}
           </div>
         </div>
       </header>
       <main className="t-container" style={{ paddingTop: 32, paddingBottom: 48 }}>{children}</main>
       <footer className="t-footer">
-        <div className="t-container" style={{ padding: '24px', textAlign: 'center', fontSize: 12, color: 'var(--text-subtle)' }}>
-          Mock reference — all figures synthetic. No real securities offered.
+        <div className="t-container" style={{ padding: '24px', display: 'flex', gap: 16, justifyContent: 'center', fontSize: 12, color: 'var(--text-subtle)', flexWrap: 'wrap' }}>
+          <span>© 2026 TerminaOne. All figures illustrative.</span>
+          <Link to="/ui-kit">UI kit</Link>
+          <Link to="/insights">Insights</Link>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><UserRound size={12} /> Design reference build</span>
         </div>
       </footer>
     </div>
@@ -86,7 +125,7 @@ export const Empty = ({ text }: { text: string }) => (
   <div style={{ border: '1px dashed var(--border-default)', borderRadius: 12, padding: 24, textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>{text}</div>
 );
 export const Err = ({ text, onRetry }: { text: string; onRetry?: () => void }) => (
-  <div style={{ border: '1px solid rgba(255,77,106,.35)', background: 'rgba(255,77,106,.12)', borderRadius: 8, padding: 16, fontSize: 13 }}>Error: {text} {onRetry && <button style={{ textDecoration: 'underline' }} onClick={onRetry}>Retry</button>}</div>
+  <div style={{ border: '1px solid var(--danger)', background: 'var(--warn-bg)', borderRadius: 8, padding: 16, fontSize: 13 }}>Error: {text} {onRetry && <button style={{ textDecoration: 'underline' }} onClick={onRetry}>Retry</button>}</div>
 );
 export const Skeleton = () => (
   <div className="card" style={{ color: 'var(--text-subtle)' }}>Loading…</div>
