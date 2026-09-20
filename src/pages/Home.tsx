@@ -79,11 +79,11 @@ export default function Home() {
   const articles = useColl<Article>('articles');
   const users = useColl<AppUser>('users');
   const liveCount = funds.filter((f) => f.status === 'live').length;
-  const cards = opportunities.slice(0, 4).map((o) => ({
+  const cards = opportunities.slice(0, 2).map((o) => ({
     opp: o,
     fund: funds.find((f) => f._id === o.fundId),
   }));
-  const posts = articles.filter((a) => a.status === 'published');
+  const posts = articles.filter((a) => a.status === 'published').slice(0, 3);
   const adv = users.find((u) => u.roleGroup === 'advisor') ?? users[0];
 
   return (

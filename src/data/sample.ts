@@ -75,6 +75,7 @@ export const signatures: SignatureRequest[] = [
 export const articles: Article[] = [
   { _id: 'a1', title: 'Pre-IPO Guide: Bids, Asks and Indications', status: 'published', category: 'GUIDES', bodyMarkdown: '# Pre-IPO Guide\n\nSubmit an indication from an opportunity page, complete the bank transfer, then e-sign to move toward allocation.', updatedAt: '2026-08-01' },
   { _id: 'a2', title: 'Understanding NAV and Offer Price', status: 'published', category: 'EDUCATION', bodyMarkdown: '# NAV vs Offer Price\n\nNAV reflects the current mark of fund holdings. The offer price per unit is set at subscription and may differ from NAV.', updatedAt: '2026-08-10' },
+  { _id: 'a4', title: 'Secondary Liquidity Windows, Explained', status: 'published', category: 'GUIDES', bodyMarkdown: '# Liquidity Windows\n\nSecondary sales open during scheduled windows. Join a watchlist to hear when the window for your company opens, and keep transfer documents ready.', updatedAt: '2026-09-10' },
   { _id: 'a3', title: 'Q3 Private Market Update (Draft)', status: 'draft', category: 'UPDATES', bodyMarkdown: '# Draft\n\nNot visible publicly.', updatedAt: '2026-09-01' },
 ];
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Bell, Building2, Inbox, LayoutGrid, Star, Landmark, FolderOpen,
   Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
-  Moon, ShieldCheck, LogOut,
+  Moon, Sun, ShieldCheck, LogOut,
 } from 'lucide-react';
 import { logout, type RootState } from '../store';
 import { Menu } from './Menu';
@@ -114,6 +114,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
               </>
             ) : (
               <>
+                <button className="t-iconbtn" onClick={toggleTheme}
+                  aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                  title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>
+                  {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                </button>
                 <NavLink to="/auth/login" className="link-more hide-md">Log In</NavLink>
                 <Link to="/auth/login" className="btn btn-primary" style={{ height: 34 }}>Sign up</Link>
               </>
@@ -137,7 +142,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Link to="/insights">Terms of Use</Link>
             <Link to="/insights">Privacy Policy</Link>
             <Link to="/insights">Disclosures</Link>
-            <Link to="/ui-kit">UI kit</Link>
             <Link to="/insights">Insights</Link>
           </div>
           <p style={{ margin: 0, textAlign: 'center', maxWidth: 900, marginLeft: 'auto', marginRight: 'auto' }}>
