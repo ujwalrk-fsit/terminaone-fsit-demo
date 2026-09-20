@@ -17,7 +17,8 @@ import Funds from './pages/Funds';
 import UiKit from './pages/UiKit';
 import DataRoom from './pages/DataRoom';
 import DataRoomDetail from './pages/DataRoomDetail';
-import { Insights, InsightDetail, SimpleAuth } from './pages/Misc';
+import { Insights, InsightDetail, Signup, Forgot } from './pages/Misc';
+import Onboarding from './pages/Onboarding';
 
 function RequireAuth({ children }: { children: ReactElement }) {
   const user = useSelector((s: RootState) => s.auth.user);
@@ -76,8 +77,9 @@ export default function App() {
         <Route path="/insights" element={<Insights />} />
         <Route path="/insights/:id" element={<InsightById />} />
         <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/signup" element={<SimpleAuth title="Sign up" text="Create an account to start investing. Or use log in with a sample profile." />} />
-        <Route path="/auth/forgot" element={<SimpleAuth title="Reset password" text="Enter your email and we'll send you a reset link." />} />
+        <Route path="/auth/signup" element={<Signup />} />
+        <Route path="/auth/forgot" element={<Forgot />} />
+        <Route path="/onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/portfolio" element={<RequireAuth><Portfolio /></RequireAuth>} />
         <Route path="/indications" element={<RequireAuth><Indications /></RequireAuth>} />

@@ -33,9 +33,16 @@ Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123
 
 ## Routes (selection)
 
-`/`, `/opportunities`, `/opportunities/:id`, `/funds`, `/data-room`, `/data-room/:fundId`,
-`/dashboard`, `/portfolio`, `/indications`, `/documents`, `/transactions`, `/watchlist`,
-`/notifications`, `/settings`, `/insights`, `/admin`, `/ui-kit`, `/auth/*`.
+/`, `/opportunities`, `/opportunities/:id`, `/funds`, `/data-room`, `/data-room/:fundId`,
+`/dashboard`, `/portfolio`, `/indications`, `/indications/new`, `/onboarding`, `/documents`,
+`/transactions`, `/watchlist`, `/notifications`, `/settings`, `/insights`, `/admin`, `/ui-kit`, `/auth/*`.
+
+## Working back office (admin / fund_manager)
+
+Funds (create/edit + bank details), users (create/role/status), role-permission matrix,
+indication queue (approve/reject/allocate/signature), articles CMS (create/edit/publish),
+market-data editor, audit log. All edits persist in-browser (`tsg.db.v1`) and render
+everywhere immediately; reset from Settings.
 
 ## API contract (Phase-2 NestJS monolith, unchanged)
 

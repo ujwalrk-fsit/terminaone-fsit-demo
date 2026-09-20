@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowRight, CalendarDays, ChevronDown, Download, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { Area, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { opportunities, funds, indications, accounts } from '../data/sample';
+import { useColl } from '../db';
+import type { Opportunity, FundOffering, Indication, InvestorAccount } from '../types';
 import { buyerFaqs, sellerFaqs, companyExt, companyNews, hashStr, priceSeries, RANGES } from '../data/company';
 import { Empty } from '../components/Shell';
 import { StatusPill, fmtMoney, tagClass } from '../components/OppCard';
@@ -30,6 +31,10 @@ function Acc({ q, a, open, onToggle }: { q: string; a: string; open: boolean; on
 
 export default function OpportunityDetail() {
   const { id = '' } = useParams();
+  const opportunities = useColl<Opportunity>('opportunities');
+  const fundList = useColl<FundOffering>('funds');
+  const indicationList = useColl<Indication>('indications');
+  const accountList = useColl<InvestorAccount>('accounts');
   const o = opportunities.find((x) => x._id === id);
   const dispatch = useDispatch();
   const auth = useSelector((s: RootState) => s.auth);
@@ -42,8 +47,8 @@ export default function OpportunityDetail() {
   const spyOff = useRef(false);
 
   const ext = companyExt[id];
-  const fund = funds.find((f) => f._id === o?.fundId);
-  const book = indications.filter((i) => o && (i.opportunityId === o._id || i.fundId === o.fundId));
+  const fund = fundList.find((f) => f._id === o?.fundId);
+  const book = indicationList.filter((i) => o && (i.opportunityId === o._id || i.fundId === o.fundId));
   const peers = useMemo(() => {
     if (!o) return [];
     const same = opportunities.filter((x) => x._id !== o._id && x.sector === o.sector);
@@ -64,7 +69,7 @@ export default function OpportunityDetail() {
   const asks = Math.max(1, Math.round(bids * (0.5 + (h % 100) / 140)));
   const highBid = o?.tsgPrice ? o.tsgPrice * 0.97 : undefined;
   const lowAsk = o?.tsgPrice ? o.tsgPrice * 1.03 : undefined;
-  const myAcct = accounts.find((a) => a.userId === (auth.user?.sub ?? 'u_inv1'));
+  const myAcct = accountList.find((a) => a.userId === (auth.user?.sub ?? 'u_inv1'));
   const news = [...companyNews.filter((n) => n.oppId === id), ...companyNews.filter((n) => !n.oppId)].slice(0, 4);
 
   // scroll-spy

@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { opportunities } from '../data/sample';
+import { useColl } from '../db';
+import type { Opportunity } from '../types';
 import { Card, Empty } from '../components/Shell';
 import { toggle, type RootState } from '../store';
 
 export default function Watchlist() {
   const watch = useSelector((s: RootState) => s.watch);
   const dispatch = useDispatch();
+  const opportunities = useColl<Opportunity>('opportunities');
   const list = opportunities.filter((o) => watch.ids.includes(o._id));
   return (
     <div className="space-y-4">

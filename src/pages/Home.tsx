@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowRight, CheckCircle2, Mail, Phone } from 'lucide-react';
-import { funds, opportunities, articles, users } from '../data/sample';
+import { useColl } from '../db';
+import type { FundOffering, Opportunity, Article, AppUser } from '../types';
 import type { RootState } from '../store';
 import { OppCard } from '../components/OppCard';
 
@@ -15,8 +16,7 @@ function HeroBadge() {
   );
 }
 
-function AdvisorCard() {
-  const adv = users.find((u) => u.roleGroup === 'advisor')!;
+function AdvisorCard({ adv }: { adv: AppUser }) {
   return (
     <aside className="advisor" aria-label="Primary advisor">
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -41,10 +41,11 @@ function AdvisorCard() {
 }
 
 function MarketAside() {
+  const opportunities = useColl<Opportunity>('opportunities');
   const top = [...opportunities].sort((a, b) => a.rank - b.rank).slice(0, 5);
   return (
     <div>
-      <h2 style={{ font: '700 20px/24px var(--font-display)', color: '#fff', textTransform: 'uppercase', letterSpacing: '.02em', margin: '0 0 8px' }}>
+      <h2 style={{ font: '700 20px/24px var(--font-display)', color: 'var(--text-strong)', textTransform: 'uppercase', letterSpacing: '.02em', margin: '0 0 8px' }}>
         Explore opportunities
       </h2>
       <p style={{ font: '400 12px/18px var(--font-body)', color: 'var(--text-muted)', margin: '0 0 16px' }}>
@@ -73,12 +74,17 @@ function MarketAside() {
 export default function Home() {
   const auth = useSelector((s: RootState) => s.auth);
   const first = auth.user ? auth.user.email.split('@')[0] : 'Drew';
+  const funds = useColl<FundOffering>('funds');
+  const opportunities = useColl<Opportunity>('opportunities');
+  const articles = useColl<Article>('articles');
+  const users = useColl<AppUser>('users');
   const liveCount = funds.filter((f) => f.status === 'live').length;
   const cards = opportunities.slice(0, 4).map((o) => ({
     opp: o,
     fund: funds.find((f) => f._id === o.fundId),
   }));
   const posts = articles.filter((a) => a.status === 'published');
+  const adv = users.find((u) => u.roleGroup === 'advisor') ?? users[0];
 
   return (
     <div style={{ display: 'grid', gap: 32 }}>
@@ -93,10 +99,10 @@ export default function Home() {
               {!auth.user && <Link to="/auth/login" className="btn btn-ghost">Log in</Link>}
             </div>
           </div>
-          <div className="hide-lg"><AdvisorCard /></div>
+          <div className="hide-lg"><AdvisorCard adv={adv} /></div>
         </div>
       </section>
-      <div className="show-lg"><AdvisorCard /></div>
+      <div className="show-lg"><AdvisorCard adv={adv} /></div>
 
       <div className="layout-main">
         <section>

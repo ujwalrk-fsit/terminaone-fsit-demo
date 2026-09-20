@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Bell, Search, Building2, LayoutGrid, Star, Landmark, FolderOpen,
+  Bell, Building2, LayoutGrid, Star, Landmark, FolderOpen,
   Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
   Moon, ShieldCheck, LogOut,
 } from 'lucide-react';
 import { logout, type RootState } from '../store';
 import { Menu } from './Menu';
+import SearchBox from './SearchBox';
 import Sidebar from './Sidebar';
 import { toggleTheme, useTheme } from '../theme';
 
@@ -61,10 +62,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
             TERMINAONE
           </Link>
-          <div className="t-search-wrap hide-md">
-            <Search size={15} />
-            <input className="t-search" placeholder="Search for companies" aria-label="Search" />
-          </div>
+          <div className="hide-md"><SearchBox /></div>
           {!railed && (
             <nav className="t-nav hide-md">
               {auth.user ? (

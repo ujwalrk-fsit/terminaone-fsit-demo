@@ -2,14 +2,17 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowRight, Database, FileText, Lock } from 'lucide-react';
 import type { RootState } from '../store';
-import { funds } from '../data/sample';
-import { dataFiles, dataActivity } from '../data/sample';
+import { useColl } from '../db';
+import type { FundOffering, DataFile } from '../types';
+import { dataActivity } from '../data/sample';
 import { canView, lastUpdated, actorName } from '../dataRoom';
 import { StatusPill } from '../components/OppCard';
 import { Card } from '../components/Shell';
 
 export default function DataRoom() {
   const role = useSelector((s: RootState) => s.auth.user?.roleGroup);
+  const funds = useColl<FundOffering>('funds');
+  const dataFiles = useColl<DataFile>('datafiles');
   const rooms = funds.map((f) => {
     const files = dataFiles.filter((d) => d.fundId === f._id);
     const mine = files.filter((d) => canView(d, role));

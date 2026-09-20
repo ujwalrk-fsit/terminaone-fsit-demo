@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { funds } from '../data/sample';
+import { useColl } from '../db';
+import type { FundOffering } from '../types';
 import { StatusPill, fmtMoney } from '../components/OppCard';
 import { Empty } from '../components/Shell';
 
 export default function Funds() {
+  const funds = useColl<FundOffering>('funds');
   const vis = funds.filter((f) => f.status !== 'draft');
   return (
     <div style={{ display: 'grid', gap: 16 }}>

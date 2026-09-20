@@ -3,17 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Download, Eye, Lock, Plus, Search, Send } from 'lucide-react';
 import type { RootState } from '../store';
-import { funds } from '../data/sample';
-import type { DataFile, DataFileType, DataFolder } from '../types';
-import { FOLDERS, canView, fmtSize, fundName, latest, roomActivity, roomFiles, actorName } from '../dataRoom';
+import { useColl, upsert } from '../db';
+import type { DataFile, DataFileType, DataFolder, FundOffering } from '../types';
+import { FOLDERS, canView, fmtSize, fundName, latest, roomActivity, actorName } from '../dataRoom';
 import { StatusPill } from '../components/OppCard';
 import { Card, Empty } from '../components/Shell';
-
-const LS_DR = 'tsg.dataroom';
-function loadExtra(): DataFile[] {
-  try { const r = localStorage.getItem(LS_DR); if (r) return JSON.parse(r); } catch { /* */ }
-  return [];
-}
 
 function downloadFile(f: DataFile) {
   const lines = [
@@ -31,9 +25,11 @@ const typeColor: Record<DataFileType, string> = { PDF: '#D92D20', XLSX: '#178A3A
 
 export default function DataRoomDetail() {
   const { fundId = '' } = useParams();
-  const role = useSelector((s: RootState) => s.auth.user?.roleGroup);
+  const auth = useSelector((s: RootState) => s.auth);
+  const role = auth.user?.roleGroup;
+  const funds = useColl<FundOffering>('funds');
+  const allFiles = useColl<DataFile>('datafiles');
   const fund = funds.find((f) => f._id === fundId);
-  const [extra, setExtra] = useState<DataFile[]>(loadExtra);
   const [folder, setFolder] = useState<'All' | DataFolder>('All');
   const [q, setQ] = useState('');
   const [status, setStatus] = useState('');
@@ -43,7 +39,7 @@ export default function DataRoomDetail() {
   const [showUpload, setShowUpload] = useState(false);
   const [up, setUp] = useState({ title: '', folder: 'Reports & Updates' as DataFolder, type: 'PDF' as DataFileType, note: '' });
 
-  const files = useMemo(() => roomFiles(fundId, extra), [fundId, extra]);
+  const files = useMemo(() => allFiles.filter((f) => f.fundId === fundId), [allFiles, fundId]);
 
   if (!fund) return <Empty text="Data room not found." />;
   const canUpload = role === 'admin' || role === 'fund_manager';
@@ -62,14 +58,12 @@ export default function DataRoomDetail() {
   const doUpload = () => {
     if (!up.title.trim()) return;
     const rec: DataFile = {
-      _id: `dr_local_${Date.now()}`, fundId, folder: up.folder, title: up.title.trim(),
+      _id: `dr_${Date.now()}`, fundId, folder: up.folder, title: up.title.trim(),
       fileType: up.type, status: 'draft', access: [], summary: up.note || 'Uploaded by the back office. Summary pending.',
       updatedAt: new Date().toISOString().slice(0, 10),
-      versions: [{ v: 1, uploadedBy: 'you', uploadedAt: new Date().toISOString().slice(0, 10), note: 'Initial upload', sizeKb: 320 }],
+      versions: [{ v: 1, uploadedBy: auth.user?.sub ?? 'you', uploadedAt: new Date().toISOString().slice(0, 10), note: 'Initial upload', sizeKb: 320 }],
     };
-    const next = [rec, ...extra];
-    setExtra(next);
-    try { localStorage.setItem(LS_DR, JSON.stringify(next)); } catch { /* */ }
+    upsert('datafiles', rec);
     setSessionActs((p) => [{ action: 'uploaded', target: rec.title, createdAt: rec.updatedAt }, ...p]);
     setShowUpload(false); setUp({ title: '', folder: 'Reports & Updates', type: 'PDF', note: '' });
   };

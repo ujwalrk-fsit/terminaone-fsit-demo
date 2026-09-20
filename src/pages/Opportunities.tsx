@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { opportunities, funds } from '../data/sample';
+import { useColl } from '../db';
+import type { FundOffering, Opportunity } from '../types';
 import { OppCard } from '../components/OppCard';
 import { Empty } from '../components/Shell';
 
 export default function Opportunities() {
   const [q, setQ] = useState('');
   const [sector, setSector] = useState('');
-  const sectors = useMemo(() => [...new Set(opportunities.map((o) => o.sector))], []);
+  const opportunities = useColl<Opportunity>('opportunities');
+  const funds = useColl<FundOffering>('funds');
+  const sectors = useMemo(() => [...new Set(opportunities.map((o) => o.sector))], [opportunities]);
   const list = opportunities.filter((o) =>
     (!sector || o.sector === sector) &&
     (!q || o.name.toLowerCase().includes(q.toLowerCase()) || o.subSector.toLowerCase().includes(q.toLowerCase())));
@@ -19,7 +22,7 @@ export default function Opportunities() {
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
         <div style={{ position: 'relative' }}>
-          <Search size={16} color="#fff" style={{ position: 'absolute', left: 12, top: 12 }} />
+          <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-subtle)' }} />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or sub-sector" className="t-search" aria-label="Search opportunities" />
         </div>
         <select value={sector} onChange={(e) => setSector(e.target.value)} style={{ height: 40, padding: '0 12px' }} aria-label="Filter by sector">

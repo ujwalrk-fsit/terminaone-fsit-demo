@@ -1,6 +1,6 @@
 import { configureStore, createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { JwtPayload, RoleGroup } from '../types';
-import { users } from '../data/sample';
+import type { JwtPayload, RoleGroup, AppUser } from '../types';
+import { all } from '../db';
 
 const LS_AUTH = 'tsg.auth';
 const LS_WATCH = 'tsg.watchlist';
@@ -28,14 +28,15 @@ const authSlice = createSlice({
   initialState: loadAuth() as AuthState,
   reducers: {
     login(state, a: PayloadAction<{ email: string; password: string }>) {
-      const u = users.find((x) => x.emailId === a.payload.email.toLowerCase() && x.password === a.payload.password);
+      const u = all<AppUser>('users').find((x) => x.emailId === a.payload.email.toLowerCase() && x.password === a.payload.password);
       if (!u) throw new Error('Invalid credentials. Try the sample logins on this page.');
       const payload: JwtPayload = { sub: u._id, email: u.emailId, roleGroup: u.roleGroup, permissions: permissionsFor(u.roleGroup) };
       state.user = payload; state.email = u.emailId; state.lastActive = Date.now();
       localStorage.setItem(LS_AUTH, JSON.stringify(state));
     },
     loginAs(state, a: PayloadAction<RoleGroup>) {
-      const u = users.find((x) => x.roleGroup === a.payload) ?? users[0];
+      const list = all<AppUser>('users');
+      const u = list.find((x) => x.roleGroup === a.payload) ?? list[0];
       const payload: JwtPayload = { sub: u._id, email: u.emailId, roleGroup: u.roleGroup, permissions: permissionsFor(u.roleGroup) };
       state.user = payload; state.email = u.emailId; state.lastActive = Date.now();
       localStorage.setItem(LS_AUTH, JSON.stringify(state));

@@ -3,7 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowRight } from 'lucide-react';
 import type { RootState } from '../store';
-import { indications as rows, funds, opportunities, accounts } from '../data/sample';
+import { useColl, upsert } from '../db';
+import type { Indication, FundOffering, Opportunity, InvestorAccount } from '../types';
 import { Card, Empty } from '../components/Shell';
 import { BankPanel, SignPad } from '../components/BankSign';
 
@@ -18,9 +19,9 @@ const STATUSES = ['DRAFT', 'PAYMENT_PROCESSING', 'SUBSCRIBED', 'AWAITING_APPROVA
 export function Indications() {
   const auth = useSelector((s: RootState) => s.auth);
   const [filter, setFilter] = useState('');
-  const local = loadLocal();
-  const all = [...local, ...rows].filter((i) => !auth.user || auth.user.roleGroup !== 'investor' || i.investorUserId === auth.user.sub);
-  const list = all.filter((i) => !filter || i.status === filter);
+  const rows = useColl<Indication>('indications');
+  const funds = useColl<FundOffering>('funds');
+  const list = rows.filter((i) => !auth.user || auth.user.roleGroup !== 'investor' || i.investorUserId === auth.user.sub).filter((i) => !filter || i.status === filter);
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div className="section-head" style={{ margin: 0 }}>
@@ -51,14 +52,17 @@ export function IndicationNew() {
   const [units, setUnits] = useState(100);
   const [proof, setProof] = useState('');
   const [sig, setSig] = useState<{ url: string; mode: string } | null>(null);
-  const fund = funds.find((f) => f._id === fundId)!;
+  const funds = useColl<FundOffering>('funds');
+  const opportunities = useColl<Opportunity>('opportunities');
+  const accounts = useColl<InvestorAccount>('accounts');
+  const fund = funds.find((f) => f._id === fundId) ?? funds[0];
   const opp = opportunities.find((o) => o._id === (params.get('opp') ?? fund.opportunityId));
   const amount = useMemo(() => units * fund.offerPricePerUnit, [units, fund]);
   const myAccounts = accounts.filter((a) => a.userId === (auth.user?.sub ?? 'u_inv1'));
 
   const submit = () => {
-    const rec = { _id: `i_local_${Date.now()}`, investorUserId: auth.user?.sub ?? 'u_inv1', investorAccountId: myAccounts[0]?._id ?? 'a_inv1', fundId, opportunityId: opp?._id, numberOfUnits: units, investmentAmount: amount, status: 'AWAITING_APPROVAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), proofUrl: proof };
-    const prev = loadLocal(); localStorage.setItem(LS_IOI, JSON.stringify([rec, ...prev]));
+    const rec: Indication = { _id: `i_${Date.now()}`, investorUserId: auth.user?.sub ?? 'u_inv1', investorAccountId: myAccounts[0]?._id ?? 'a_inv1', fundId, opportunityId: opp?._id, numberOfUnits: units, investmentAmount: amount, status: 'AWAITING_APPROVAL', createdAt: new Date().toISOString().slice(0, 10), updatedAt: new Date().toISOString().slice(0, 10), proofUrl: proof };
+    upsert('indications', rec);
     setStep(6);
   };
 
@@ -72,6 +76,7 @@ export function IndicationNew() {
           {funds.filter((f) => f.status === 'live' || f.status === 'upcoming').map((f) => <option key={f._id} value={f._id}>{f.fundName} ({f.status})</option>)}
         </select>
         <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text-muted)' }}>Onboarding account: {myAccounts[0]?._id} ({myAccounts[0]?.status})</div>
+        {myAccounts[0]?.status !== 'ACTIVE' && <div style={{ marginTop: 6, fontSize: 13 }}><Link to="/onboarding" className="link-more">Complete account setup first</Link></div>}
         <div style={{ marginTop: 12 }}><button className="btn btn-primary" onClick={() => setStep(2)}>Continue <ArrowRight size={16} /></button></div></Card>}
       {step === 2 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)' }}>2. Units / amount</div>
         <input type="number" min={1} value={units} onChange={(e) => setUnits(Number(e.target.value))} style={{ marginTop: 8, width: '100%', padding: 10 }} aria-label="Number of units" />
