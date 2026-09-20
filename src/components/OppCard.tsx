@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
 import type { FundOffering, FundStatus, Opportunity } from '../types';
 
+export function tagClass(t: string) {
+  if (t === 'Actively Traded' || t === 'Top Gainer') return 'tag tag-hot';
+  if (t === 'Unicorn') return 'tag tag-uni';
+  return 'tag tag-new';
+}
+
 export function StatusPill({ status }: { status: FundStatus }) {
   if (status === 'live') return <span className="pill pill-live">Live</span>;
   if (status === 'upcoming') return <span className="pill pill-info">Upcoming</span>;
@@ -27,6 +33,11 @@ export function OppCard({ opp, fund }: { opp: Opportunity; fund?: FundOffering }
         {f ? <StatusPill status={f.status} /> : <span className="pill pill-neutral">{opp.activity}</span>}
       </header>
       <p className="opp-card__desc">{opp.description}</p>
+      {opp.tags && opp.tags.length > 0 && (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+          {opp.tags.slice(0, 2).map((t) => <span key={t} className={tagClass(t)}>{t}</span>)}
+        </div>
+      )}
       <hr />
       <dl className="opp-card__stats">
         <div><dt>Minimum Investment</dt><dd>{f ? `$${f.minimumInvestment.toLocaleString()}` : '—'}</dd></div>

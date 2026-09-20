@@ -34,15 +34,24 @@ export interface FundOffering {
 }
 
 export interface QuarterlyPoint { year: number; quarter: string; value: number; }
+export interface FundingRound {
+  round: string; date: string; raised: number; pps: number; valuation: number;
+  investors: string[]; liquidation: string;
+}
+export interface Leader { name: string; role: string; }
+export interface NewsItem { title: string; source: string; date: string; }
 // Renamed entity: Opportunity (retired ER vault name removed). No legacy strings in code.
 export interface Opportunity {
   _id: string; name: string; imageUrl?: string;
   sector: string; subSector: string; rank: number;
   latestQoQ?: number; cumulativeChange?: number;
   quarterlyData: QuarterlyPoint[];
-  lastRound?: { round: string; date: string; valuation: number; pps: number };
+  lastRound?: { round: string; date: string; valuation: number; pps: number; raised?: number; investors?: string[] };
   tsgPrice?: number; priceChange1Y?: number; activity: 'Limited' | 'Low' | 'Medium' | 'High';
   description: string; fundId?: string;
+  website?: string; hq?: string; founded?: string; overview?: string;
+  investors?: string[]; leadership?: Leader[]; board?: string[];
+  rounds?: FundingRound[]; lastMatched?: number; tags?: string[];
 }
 
 export type IndicationStatus =

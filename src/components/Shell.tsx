@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Bell, Search, Building2, LayoutGrid, Star, Landmark, FolderOpen,
   Briefcase, ArrowLeftRight, Repeat, ReceiptText, FileCheck2,
-  Moon, ShieldCheck, LogOut, UserRound,
+  Moon, ShieldCheck, LogOut,
 } from 'lucide-react';
 import { logout, type RootState } from '../store';
 import { Menu } from './Menu';
@@ -108,11 +108,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <main className="t-container" style={{ paddingTop: 32, paddingBottom: 48 }}>{children}</main>
       <footer className="t-footer">
-        <div className="t-container" style={{ padding: '24px', display: 'flex', gap: 16, justifyContent: 'center', fontSize: 12, color: 'var(--text-subtle)', flexWrap: 'wrap' }}>
-          <span>© 2026 TerminaOne. All figures illustrative.</span>
-          <Link to="/ui-kit">UI kit</Link>
-          <Link to="/insights">Insights</Link>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><UserRound size={12} /> Design reference build</span>
+        <div className="t-container" style={{ padding: '20px 24px 24px', fontSize: 11, color: 'var(--text-subtle)' }}>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
+            <Link to="/insights">Terms of Use</Link>
+            <Link to="/insights">Privacy Policy</Link>
+            <Link to="/insights">Disclosures</Link>
+            <Link to="/ui-kit">UI kit</Link>
+            <Link to="/insights">Insights</Link>
+          </div>
+          <p style={{ margin: 0, textAlign: 'center', maxWidth: 900, marginLeft: 'auto', marginRight: 'auto' }}>
+            TerminaOne is a design-reference build. All prices, valuations and company data are illustrative sample data,
+            not offers or investment advice. Secondary transactions are subject to transfer restrictions, consents and
+            applicable securities regulations. © 2026 TerminaOne.
+          </p>
         </div>
       </footer>
     </div>
