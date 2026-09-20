@@ -94,9 +94,9 @@ export default function Home() {
           <div>
             <h1>Welcome back, {first}.<br />You&apos;re investment ready!</h1>
             <p className="sub">Explore opportunities and start investing today. {liveCount} live funds · {opportunities.length} tracked opportunities.</p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
-              <Link to="/opportunities" className="btn btn-inverse">Explore opportunities</Link>
-              {!auth.user && <Link to="/auth/login" className="btn btn-ghost">Log in</Link>}
+            <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+              <Link to="/opportunities" className="btn btn-inverse" style={{ height: 36 }}>Explore opportunities</Link>
+              {!auth.user && <Link to="/auth/login" className="btn btn-ghost" style={{ height: 36 }}>Log in</Link>}
             </div>
           </div>
           <div className="hide-lg"><AdvisorCard adv={adv} /></div>
