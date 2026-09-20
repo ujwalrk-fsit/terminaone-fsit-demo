@@ -47,7 +47,7 @@ export function OppCard({ opp, fund }: { opp: Opportunity; fund?: FundOffering }
         <div><strong className="raised">{f?.raised ? fmtMoney(f.raised) : '—'}</strong><small>raised</small></div>
         <div className="right"><strong>{f ? fmtMoney(f.offeringSize) : '—'}</strong><small>Offering Size</small></div>
       </div>
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 'auto', paddingTop: 16 }}>
         {f?.status === 'closed' ? (
           <button className="btn btn-block" disabled>Closed</button>
         ) : (

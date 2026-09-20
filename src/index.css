@@ -206,7 +206,7 @@ a { color: var(--link); }
 .advisor__avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--brand-blue); display: grid; place-items: center; color: #fff; font: 600 15px/1 var(--font-display); border: 2px solid #fff; flex: none; }
 
 /* ---- opportunity card (flat) ---- */
-.opp-card { padding: 16px; border-radius: var(--r-lg); border: 1px solid var(--border-default); background: var(--surface-1); box-shadow: var(--elev-1); }
+.opp-card { padding: 16px; border-radius: var(--r-lg); border: 1px solid var(--border-default); background: var(--surface-1); box-shadow: var(--elev-1); display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
 .opp-card:hover { border-color: var(--border-brand-hover); }
 .opp-card__media { height: 88px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-2); color: var(--text-subtle); font: 600 34px/1 var(--font-display); }
 .opp-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-top: 12px; }
