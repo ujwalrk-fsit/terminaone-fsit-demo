@@ -16,9 +16,9 @@ export function RoleSwitcher() {
   const nav = useNavigate();
   const roles: RoleGroup[] = ['admin', 'advisor', 'affiliate', 'fund_manager', 'monitor', 'investor'];
   return (
-    <div className="flex flex-wrap gap-2">
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
       {roles.map((r) => (
-        <button key={r} className="rounded border px-2 py-1 text-xs" onClick={() => { dispatch(loginAs(r)); nav('/dashboard'); }}>{r}</button>
+        <button key={r} className="chip" onClick={() => { dispatch(loginAs(r)); nav('/dashboard'); }}>{r}</button>
       ))}
     </div>
   );
@@ -30,21 +30,24 @@ export default function Login() {
   const [err, setErr] = useState('');
   const { register, handleSubmit } = useForm<F>({ resolver: zodResolver(schema), defaultValues: { email: 'investor@demo.local', password: 'investor123' } });
   return (
-    <div className="mx-auto max-w-md space-y-4">
-      <h1 className="text-2xl font-extrabold">Login (mock native JWT)</h1>
+    <div style={{ maxWidth: 440, margin: '40px auto', display: 'grid', gap: 16 }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ font: '800 22px var(--font-display)', color: '#fff', letterSpacing: '.04em' }}>TERMINA<span style={{ color: 'var(--primary-400)' }}>ONE</span></div>
+        <h1 style={{ font: '700 20px/26px var(--font-display)', color: '#fff', margin: '12px 0 0' }}>Log in <span style={{ font: '400 12px var(--font-body)', color: 'var(--text-subtle)' }}>(mock native JWT)</span></h1>
+      </div>
       <Card>
-        <form className="space-y-3" onSubmit={handleSubmit((v) => {
+        <form style={{ display: 'grid', gap: 12 }} onSubmit={handleSubmit((v) => {
           try { dispatch(login(v)); nav('/dashboard'); } catch (e: unknown) { setErr(e instanceof Error ? e.message : 'Login failed'); }
         })}>
-          <input {...register('email')} className="w-full rounded border p-2 text-sm" placeholder="email" />
-          <input {...register('password')} type="password" className="w-full rounded border p-2 text-sm" placeholder="password" />
-          {err && <div className="text-sm text-red-600">{err}</div>}
-          <button className="w-full rounded bg-[#0b3b8f] py-2 text-sm text-white">Login</button>
+          <input {...register('email')} style={{ padding: 10 }} placeholder="email" aria-label="Email" />
+          <input {...register('password')} type="password" style={{ padding: 10 }} placeholder="password" aria-label="Password" />
+          {err && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{err}</div>}
+          <button className="btn btn-primary btn-block">Login</button>
         </form>
-        <div className="mt-3 text-xs">Demo: investor@demo.local / investor123 · admin@demo.local / admin123</div>
-        <div className="mt-2 text-sm"><Link to="/auth/forgot" className="underline">Forgot password?</Link> · <Link to="/auth/signup" className="underline">Sign up</Link></div>
+        <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-subtle)' }}>Demo: investor@demo.local / investor123 · admin@demo.local / admin123</div>
+        <div style={{ marginTop: 8, fontSize: 13 }}><Link to="/auth/forgot" className="link-more">Forgot password?</Link> · <Link to="/auth/signup" className="link-more">Sign up</Link></div>
       </Card>
-      <Card><div className="mb-2 text-sm font-bold">One-click role switch (dev reference)</div><RoleSwitcher /></Card>
+      <Card><div style={{ marginBottom: 8, fontSize: 13, fontWeight: 700, color: '#fff' }}>One-click role switch (dev reference)</div><RoleSwitcher /></Card>
     </div>
   );
 }

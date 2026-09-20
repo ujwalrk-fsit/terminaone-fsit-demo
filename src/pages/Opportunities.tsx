@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { opportunities } from '../mocks/seed';
-import { Card, Empty } from '../components/Shell';
+import { Search } from 'lucide-react';
+import { opportunities, funds } from '../mocks/seed';
+import { OppCard } from '../components/OppCard';
+import { Empty } from '../components/Shell';
 
 export default function Opportunities() {
   const [q, setQ] = useState('');
@@ -11,27 +12,27 @@ export default function Opportunities() {
     (!sector || o.sector === sector) &&
     (!q || o.name.toLowerCase().includes(q.toLowerCase()) || o.subSector.toLowerCase().includes(q.toLowerCase())));
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">Marketplace — Opportunities</h1>
-      <div className="flex flex-wrap gap-2">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or sub-sector" className="rounded border p-2 text-sm" />
-        <select value={sector} onChange={(e) => setSector(e.target.value)} className="rounded border p-2 text-sm">
+    <div style={{ display: 'grid', gap: 16 }}>
+      <div className="section-head">
+        <h2>Marketplace — Opportunities</h2>
+        <span className="pill pill-neutral">{list.length} tracked</span>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={16} color="#fff" style={{ position: 'absolute', left: 12, top: 12 }} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or sub-sector" className="t-search" aria-label="Search opportunities" />
+        </div>
+        <select value={sector} onChange={(e) => setSector(e.target.value)} style={{ height: 40, padding: '0 12px' }} aria-label="Filter by sector">
           <option value="">All sectors</option>
           {sectors.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
       {list.length === 0 ? <Empty text="No opportunities match filters (edge case)." /> : (
-        <div className="grid gap-4 md:grid-cols-3">
-          {list.map((o) => (
-            <Card key={o._id}>
-              <Link to={`/opportunities/${o._id}`} className="font-bold">{o.name}</Link>
-              <div className="text-xs text-slate-500">{o.sector} / {o.subSector}</div>
-              <div className="mt-1 text-sm">{o.tsgPrice ? <>TSG Price <b>${o.tsgPrice}</b> · {o.priceChange1Y}% 1Y</> : 'Price not available'}</div>
-              <div className="text-xs">Last round: {o.lastRound ? `${o.lastRound.round} · $${(o.lastRound.valuation / 1e9).toFixed(1)}B` : '—'} · Activity: {o.activity}</div>
-            </Card>
-          ))}
+        <div className="grid-posts">
+          {list.map((o) => <OppCard key={o._id} opp={o} fund={funds.find((f) => f._id === o.fundId)} />)}
         </div>
       )}
+      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures here are synthetic mock data for design reference — not investment advice.</div>
     </div>
   );
 }

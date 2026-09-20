@@ -11,7 +11,7 @@ export default function Dashboard() {
   const queue = indications.filter((i) => ['AWAITING_APPROVAL', 'AWAITING_SIGNATURE'].includes(i.status));
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-extrabold">Dashboard <span className="text-sm font-normal text-slate-500">({role})</span></h1>
+      <h1 className="text-2xl font-extrabold" style={{ color: '#fff' }}>Dashboard <span className="text-sm font-normal" style={{ color: 'var(--text-subtle)' }}>({role})</span></h1>
       {role === 'investor' && (
         <div className="grid gap-4 md:grid-cols-3">
           <Card><div className="text-xs">My indications</div><div className="text-2xl font-extrabold">{mine.length}</div><Link to="/indications" className="text-sm underline">View</Link></Card>

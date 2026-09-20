@@ -49,8 +49,8 @@ function SessionGuard() {
   }, [dispatch]);
   if (!warn || !auth.user) return null;
   return (
-    <div className="fixed bottom-4 right-4 rounded border bg-white p-4 text-sm shadow-lg">
-      Session expiring in ~1 min (mock countdown). <button className="ml-2 rounded bg-slate-900 px-2 py-1 text-white" onClick={() => { dispatch(touch()); setWarn(false); }}>Stay</button>
+    <div className="card" style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 50, fontSize: 13, boxShadow: 'var(--elev-2)' }}>
+      Session expiring in ~1 min (mock countdown). <button className="btn btn-primary" style={{ height: 32, marginLeft: 8 }} onClick={() => { dispatch(touch()); setWarn(false); }}>Stay</button>
     </div>
   );
 }

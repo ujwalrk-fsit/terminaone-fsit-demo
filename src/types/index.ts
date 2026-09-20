@@ -30,6 +30,7 @@ export interface FundOffering {
   status: FundStatus; managers: string[]; affiliates: string[];
   faqs: { q: string; a: string }[]; keyRisks: string;
   bankDetails?: BankDetails; opportunityId?: string;
+  raised?: number; // mock subscribed amount; progress = raised / offeringSize
 }
 
 export interface QuarterlyPoint { year: number; quarter: string; value: number; }
