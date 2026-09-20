@@ -43,7 +43,7 @@ export default function Funds() {
                   Bank details {f.bankDetails ? `${f.bankDetails.bankName} ✓` : 'to be published'} · <Link to={`/data-room/${f._id}`} className="link-more" style={{ fontSize: 12 }}>Data room</Link>
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  <Link to={`/indications/new?fund=${f._id}`} className="btn btn-primary btn-block">
+                  <Link to={`/indications/new?fund=${f._id}`} className="btn btn-accent btn-block">
                     Express interest <ArrowRight size={16} />
                   </Link>
                 </div>

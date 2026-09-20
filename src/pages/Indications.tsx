@@ -139,7 +139,7 @@ export function Indications() {
                             <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
                               Units:
                               <input type="number" min={1} value={units} onChange={(e) => setEditUnits({ ...editUnits, [i._id]: Number(e.target.value) })} style={{ width: 90, padding: '4px 6px' }} />
-                              <button className="btn btn-primary" style={{ height: 30 }} onClick={() => {
+                              <button className="btn btn-accent" style={{ height: 30 }} onClick={() => {
                                 const price = f?.offerPricePerUnit ?? px;
                                 upsert('indications', { ...i, numberOfUnits: units, investmentAmount: Math.round(units * price), updatedAt: new Date().toISOString().slice(0, 10) });
                                 setOpen(null);
@@ -157,7 +157,7 @@ export function Indications() {
         </div>
       )}
       <div>
-        <Link to="/indications/new" className="btn btn-primary">New indication</Link>
+        <Link to="/indications/new" className="btn btn-accent">New indication</Link>
       </div>
     </div>
   );
@@ -197,27 +197,27 @@ export function IndicationNew() {
         </select>
         <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text-muted)' }}>Onboarding account: {myAccounts[0]?._id} ({myAccounts[0]?.status})</div>
         {myAccounts[0]?.status !== 'ACTIVE' && <div style={{ marginTop: 6, fontSize: 13 }}><Link to="/onboarding" className="link-more">Complete account setup first</Link></div>}
-        <div style={{ marginTop: 12 }}><button className="btn btn-primary" onClick={() => setStep(2)}>Continue <ArrowRight size={16} /></button></div></Card>}
+        <div style={{ marginTop: 12 }}><button className="btn btn-accent" onClick={() => setStep(2)}>Continue <ArrowRight size={16} /></button></div></Card>}
       {step === 2 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)' }}>2. Units / amount</div>
         <input type="number" min={1} value={units} onChange={(e) => setUnits(Number(e.target.value))} style={{ marginTop: 8, width: '100%', padding: 10 }} aria-label="Number of units" />
         <div className="tnum" style={{ marginTop: 8, fontSize: 13 }}>Amount: <b style={{ color: 'var(--text-strong)' }}>${amount.toLocaleString()}</b> (min ${fund.minimumInvestment.toLocaleString()})</div>
         {amount < fund.minimumInvestment && <div style={{ fontSize: 13, color: 'var(--danger)' }}>Below minimum.</div>}
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}><button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
-        <button disabled={amount < fund.minimumInvestment} className="btn btn-primary" onClick={() => setStep(3)}>Continue <ArrowRight size={16} /></button></div></Card>}
+        <button disabled={amount < fund.minimumInvestment} className="btn btn-accent" onClick={() => setStep(3)}>Continue <ArrowRight size={16} /></button></div></Card>}
       {step === 3 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)', marginBottom: 8 }}>3. Bank transfer + proof</div>
         <BankPanel bank={fund.bankDetails} indicationId={`draft-${units}`} onConfirmed={(u) => setProof(u)} />
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}><button className="btn btn-ghost" onClick={() => setStep(2)}>Back</button>
-        <button disabled={!proof} className="btn btn-primary" onClick={() => setStep(4)}>Continue <ArrowRight size={16} /></button></div></Card>}
+        <button disabled={!proof} className="btn btn-accent" onClick={() => setStep(4)}>Continue <ArrowRight size={16} /></button></div></Card>}
       {step === 4 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)', marginBottom: 8 }}>4. E-sign <span style={{ font: '400 12px var(--font-body)', color: 'var(--text-subtle)' }}>(investor leg; advisor and manager legs in Documents)</span></div>
         <SignPad onSign={(url, mode) => setSig({ url, mode })} />
         {sig && <div style={{ fontSize: 12 }}>Captured ✓ <a href={sig.url} target="_blank" rel="noreferrer" className="link-more">preview</a></div>}
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}><button className="btn btn-ghost" onClick={() => setStep(3)}>Back</button>
-        <button disabled={!sig} className="btn btn-primary" onClick={() => setStep(5)}>Continue <ArrowRight size={16} /></button></div></Card>}
+        <button disabled={!sig} className="btn btn-accent" onClick={() => setStep(5)}>Continue <ArrowRight size={16} /></button></div></Card>}
       {step === 5 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)' }}>5. Review & submit</div>
         <div className="tnum" style={{ marginTop: 8, fontSize: 13 }}>Fund: {fund.fundName} · Units: {units} · Amount: ${amount.toLocaleString()} · Proof: {proof ? 'attached ✓' : 'missing'} · Signed: {sig ? sig.mode : 'no'}</div>
         <div className="risk-note" style={{ marginTop: 12 }}><b>Before you submit:</b> this interest is non-binding until fund approval. Private interests are illiquid.</div>
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}><button className="btn btn-ghost" onClick={() => setStep(4)}>Back</button>
-        <button className="btn btn-primary" onClick={submit}>Submit indication</button></div></Card>}
+        <button className="btn btn-accent" onClick={submit}>Submit indication</button></div></Card>}
       {step === 6 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--success)' }}>Submitted ✓ — your indication is now awaiting approval.</div><Link to="/indications" className="link-more" style={{ marginTop: 8 }}>Back to list <ArrowRight size={16} /></Link></Card>}
     </div>
   );

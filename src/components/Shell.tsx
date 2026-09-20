@@ -59,7 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <header className="t-header">
         <div className="t-container" style={{ height: 56, display: 'flex', alignItems: 'center', gap: 20 }}>
           <Link to="/" style={{ font: '700 17px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
+            <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--brand-blue)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
             TERMINAONE
           </Link>
           <div className="hide-md"><SearchBox /></div>

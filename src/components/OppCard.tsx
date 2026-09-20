@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import type { FundOffering, FundStatus, Opportunity } from '../types';
 
 export function tagClass(t: string) {
-  if (t === 'Actively Traded' || t === 'Top Gainer') return 'tag tag-hot';
+  if (t === 'Top Gainer') return 'tag tag-hot';
   if (t === 'Unicorn') return 'tag tag-uni';
   return 'tag tag-new';
 }
@@ -54,7 +54,7 @@ export function OppCard({ opp, fund }: { opp: Opportunity; fund?: FundOffering }
         {f?.status === 'closed' ? (
           <button className="btn btn-block" disabled>Closed</button>
         ) : (
-          <Link to={`/opportunities/${opp._id}`} className="btn btn-primary btn-block">View opportunity</Link>
+          <Link to={`/opportunities/${opp._id}`} className="btn btn-accent btn-block">View opportunity</Link>
         )}
       </div>
     </article>

@@ -24,10 +24,12 @@ Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123
 - CMS: markdown textarea + preview.
 - Storage/email/queue: local only. Backend abstractions planned: `StorageService local|R2`, `MailService console|resend`, in-process events.
 
-## Theme & UI kit
+## Theme & UI kit (v2 — blue, Mintlify-derived)
 
 - Light mode default, dark mode via the user menu (persisted as `tsg.theme`, SSR-safe init in `index.html`).
-- Type: Roboto throughout (700 display, 400 body, 500 sparingly). Flat surfaces, hairline borders.
+- Type: Inter for prose, Geist Mono (tabular) for every numeric value.
+- Single blue accent `#3772cf` (deep `#2c5aa6`) for CTAs/active/chart series; gains `#1ba673`, losses `#d45656` — blue is never a gain signal.
+- Black-pill primary buttons, blue accent money-CTAs, full-rounded pills, flat surfaces, 12px cards.
 - All styling lives in `src/index.css` CSS variables — change a token, retheme the platform.
 - Open `/ui-kit` in the app to review every token and core component in one place before requesting changes.
 

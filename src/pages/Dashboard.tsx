@@ -141,7 +141,7 @@ export default function Dashboard() {
           <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-subtle)' }}>Updated today, 09:30 IST</span>
         </div>
         <div style={{ display: 'flex', gap: 14, fontSize: 12, marginTop: 6, flexWrap: 'wrap' }}>
-          <b style={{ color: 'var(--text-strong)', borderBottom: '2px solid var(--primary-600)', paddingBottom: 4 }}>{txns.length} New Secondary Transactions</b>
+          <b style={{ color: 'var(--text-strong)', borderBottom: '2px solid var(--brand-blue)', paddingBottom: 4 }}>{txns.length} New Secondary Transactions</b>
           <span style={{ color: 'var(--text-subtle)' }}>{funds.filter((f) => f.status === 'live').length} Live Funds</span>
           <span style={{ color: 'var(--text-subtle)' }}>{indications.length} Total IOIs</span>
           <span style={{ color: 'var(--text-subtle)' }}>{queue.length} Updated IOIs</span>

@@ -93,7 +93,7 @@ export function Signup() {
               <div style={{ fontSize: 12, color: 'var(--danger)', marginBottom: 8 }}>Please complete all fields correctly.</div>
             )}
             {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
-            <button className="btn btn-primary btn-block" style={{ height: 44 }}>Create account</button>
+            <button className="btn btn-accent btn-block" style={{ height: 44 }}>Create account</button>
           </form>
           <div style={{ fontSize: 13, textAlign: 'center', marginTop: 18 }}>
             Have an account?<br /><Link to="/auth/login" style={{ textDecoration: 'underline', color: 'var(--text-default)' }}>Log in</Link>
@@ -125,7 +125,7 @@ export function Forgot() {
             <div>
               <div className="auth-field"><input placeholder="Account email" aria-label="Account email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
-              <button className="btn btn-primary btn-block" style={{ height: 44 }} onClick={() => {
+              <button className="btn btn-accent btn-block" style={{ height: 44 }} onClick={() => {
                 if (!users.some((u) => u.emailId === email.toLowerCase())) { setErr('No account found for this email.'); return; }
                 setErr(''); setStep(1);
               }}>Send code</button>
@@ -142,7 +142,7 @@ export function Forgot() {
                 </button>
               </div>
               {err && <div style={{ fontSize: 13, color: 'var(--danger)', marginBottom: 8 }}>{err}</div>}
-              <button className="btn btn-primary btn-block" style={{ height: 44 }} onClick={() => {
+              <button className="btn btn-accent btn-block" style={{ height: 44 }} onClick={() => {
                 const u = users.find((x) => x.emailId === email.toLowerCase());
                 if (!u) { setErr('No account found for this email.'); return; }
                 if (code.trim() !== CODE) { setErr('Incorrect code.'); return; }

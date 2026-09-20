@@ -111,7 +111,7 @@ export default function OpportunityDetail() {
             <button onClick={() => dispatch(toggle(o._id))} className="chip">{inWatch ? '★ Watching' : '☆ Watch'}</button>
             {fund && <Link to={`/data-room/${fund._id}`} className="btn btn-ghost" style={{ height: 34 }}>Data room</Link>}
             <button className="btn btn-ghost" style={{ height: 34 }} onClick={() => window.print()}><Download size={14} /> Company profile</button>
-            <Link to={fund ? `/indications/new?fund=${fund._id}&opp=${o._id}` : '/indications/new'} className="btn btn-primary" style={{ height: 34 }}>Express interest</Link>
+            <Link to={fund ? `/indications/new?fund=${fund._id}&opp=${o._id}` : '/indications/new'} className="btn btn-accent" style={{ height: 34 }}>Express interest</Link>
           </span>
         </div>
       </div>
@@ -138,8 +138,8 @@ export default function OpportunityDetail() {
 
         {auth.user && myAcct && myAcct.status !== 'ACTIVE' && (
           <div className="notice-banner" style={{ borderColor: 'var(--border-brand)', background: 'var(--primary-50)' }}>
-            <ShieldCheck size={16} color="var(--primary-600)" />
-            <span><b style={{ color: 'var(--primary-800)' }}>Account setup {myAcct.stepKey}.</b> Complete verification to move indications to allocation.</span>
+            <ShieldCheck size={16} color="var(--brand-blue)" />
+            <span><b style={{ color: 'var(--brand-blue-deep)' }}>Account setup {myAcct.stepKey}.</b> Complete verification to move indications to allocation.</span>
             <Link to="/settings" className="link-more" style={{ fontSize: 12, marginLeft: 'auto' }}>Resume setup</Link>
           </div>
         )}
@@ -169,7 +169,7 @@ export default function OpportunityDetail() {
           <div className="kpi"><small>Spread</small><b>{highBid && lowAsk ? `$${(lowAsk - highBid).toFixed(2)}` : '—'}</b></div>
           <div className="kpi"><small>Last matched</small><b>{ext.lastMatched ? `$${ext.lastMatched.toFixed(2)}` : '—'}</b></div>
           <div className="kpi"><small>TSG Price</small><b>{o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'N/A'}</b></div>
-          <div className="kpi"><small>Range change ({range})</small><b className={chg >= 0 ? 'up' : 'down'}>{chg >= 0 ? '+' : ''}{chg.toFixed(1)}%</b></div>
+          <div className="kpi"><small>Range change ({range})</small><span className={chg >= 0 ? 'delta-pos' : 'delta-neg'}>{chg >= 0 ? '+' : ''}{chg.toFixed(1)}%</span></div>
         </div>
 
         <div className="card">
@@ -184,12 +184,12 @@ export default function OpportunityDetail() {
           <div style={{ height: 240 }}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={slice} margin={{ top: 4, right: 4, bottom: 0, left: -18 }}>
-                <CartesianGrid stroke="var(--border-subtle)" vertical={false} />
-                <XAxis dataKey="i" tick={{ fill: '#8A8CA8', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (range === '7D' ? `D${v - slice[0].i + 1}` : range === '1M' ? `W${Math.floor((v - slice[0].i) / 7) + 1}` : `M${Math.floor((v - slice[0].i) / 30) + 1}`)} minTickGap={24} />
-                <YAxis tick={{ fill: '#8A8CA8', fontSize: 10 }} axisLine={false} tickLine={false} domain={[(lo * 0.97).toFixed(0), (hi * 1.03).toFixed(0)]} />
-                <Tooltip contentStyle={{ background: 'var(--surface-1)', border: '1px solid var(--border-default)', borderRadius: 8 }} />
-                <Bar dataKey="vol" fill="var(--surface-3)" radius={[2, 2, 0, 0]} />
-                <Area type="monotone" dataKey="v" stroke="#6B0AEA" strokeWidth={2} fill="var(--primary-50)" dot={false} />
+                <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+                <XAxis dataKey="i" tick={{ fill: '#64769a', fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => (range === '7D' ? `D${v - slice[0].i + 1}` : range === '1M' ? `W${Math.floor((v - slice[0].i) / 7) + 1}` : `M${Math.floor((v - slice[0].i) / 30) + 1}`)} minTickGap={24} />
+                <YAxis tick={{ fill: '#64769a', fontSize: 10, fontFamily: 'Geist Mono, monospace' }} axisLine={false} tickLine={false} domain={[(lo * 0.97).toFixed(0), (hi * 1.03).toFixed(0)]} />
+                <Tooltip contentStyle={{ background: '#16233c', border: 'none', borderRadius: 6, color: '#fff', fontFamily: 'Geist Mono, monospace', fontSize: 12 }} />
+                <Bar dataKey="vol" fill="var(--chart-1)" fillOpacity={0.25} radius={[4, 4, 0, 0]} />
+                <Area type="monotone" dataKey="v" stroke="var(--chart-1)" strokeWidth={2} fill="var(--chart-1)" fillOpacity={0.1} dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>

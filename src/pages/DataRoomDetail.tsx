@@ -107,7 +107,7 @@ export default function DataRoomDetail() {
           <div style={{ display: 'grid', gap: 4 }}>
             {[['All', files.length] as const, ...FOLDERS.map((f) => [f, counts.get(f) ?? 0] as const)].map(([f, c]) => (
               <button key={f} onClick={() => setFolder(f as 'All' | DataFolder)}
-                style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 8, border: 0, cursor: 'pointer', background: folder === f ? 'var(--primary-50)' : 'transparent', color: folder === f ? 'var(--primary-800)' : 'var(--text-default)', fontWeight: folder === f ? 700 : 400, fontSize: 13, textAlign: 'left' }}>
+                style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 8, border: 0, cursor: 'pointer', background: folder === f ? 'rgba(55,114,207,.12)' : 'transparent', color: folder === f ? 'var(--brand-blue-deep)' : 'var(--text-default)', fontWeight: folder === f ? 600 : 400, fontSize: 13, textAlign: 'left' }}>
                 <span>{f}</span><span className="tnum">{c}</span>
               </button>
             ))}

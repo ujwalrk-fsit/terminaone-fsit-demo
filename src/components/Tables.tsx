@@ -40,7 +40,7 @@ export function TableTabs({ tabs, active, onChange }: { tabs: string[]; active: 
     <div style={{ display: 'flex', gap: 16, fontSize: 13 }}>
       {tabs.map((t) => (
         <button key={t} onClick={() => onChange(t)}
-          style={{ background: 'none', border: 0, cursor: 'pointer', padding: '4px 0', color: t === active ? 'var(--text-strong)' : 'var(--text-subtle)', fontWeight: t === active ? 700 : 400, borderBottom: t === active ? '2px solid var(--primary-600)' : '2px solid transparent' }}>
+          style={{ background: 'none', border: 0, cursor: 'pointer', padding: '4px 0', color: t === active ? 'var(--text-strong)' : 'var(--text-subtle)', fontWeight: t === active ? 700 : 400, borderBottom: t === active ? '2px solid var(--brand-blue)' : '2px solid transparent' }}>
           {t}
         </button>
       ))}
@@ -50,7 +50,7 @@ export function TableTabs({ tabs, active, onChange }: { tabs: string[]; active: 
 
 export function Avatar({ name }: { name: string }) {
   const init = name.trim().charAt(0).toUpperCase() || '?';
-  const hues = ['#2B0F4B', '#430A93', '#0E7490', '#147A33', '#9A6212'];
+  const hues = ['#16264a', '#2c5aa6', '#0f6f8c', '#1ba673', '#c37d0d'];
   let h = 0;
   for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return (
