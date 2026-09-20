@@ -28,9 +28,6 @@ function AdvisorCard({ adv }: { adv: AppUser }) {
       </div>
       <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,.18)', margin: '12px 0' }} />
       <p style={{ margin: 0, font: '700 12px/18px var(--font-display)', color: '#fff' }}>Hi there,</p>
-      <p style={{ margin: '4px 0 0', font: '400 12px/18px var(--font-body)', color: '#b7c5e0' }}>
-        I&apos;m your dedicated advisor — here to help with onboarding, reviewing opportunities, or answering investment questions.
-      </p>
       <div style={{ display: 'grid', gap: 8, marginTop: 12, font: '400 12px/18px var(--font-body)', color: '#fff' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={14} /> {adv.emailId}</span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Phone size={14} /> +91 80 4719 0000</span>
