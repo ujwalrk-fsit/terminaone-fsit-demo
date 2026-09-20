@@ -123,7 +123,7 @@ export default function OpportunityDetail() {
       </div>
 
       {/* A · Active Market */}
-      <section id="sec-market" ref={(el) => { refs.current.market = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 130 }}>
+      <section id="sec-market" ref={(el) => { refs.current.market = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
         <div className="card" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <b style={{ color: 'var(--text-strong)' }}>Market status</b>
           <span className="tnum" style={{ fontSize: 13 }}>{asks} seller asks · {bids} buyer bids</span>
@@ -157,7 +157,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* B · Trade Metrics */}
-      <section id="sec-metrics" ref={(el) => { refs.current.metrics = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 130 }}>
+      <section id="sec-metrics" ref={(el) => { refs.current.metrics = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
         <div className="kpis">
           <div className="kpi"><small>Activity</small><b>{o.activity}</b></div>
           <div className="kpi"><small>Bids / Asks</small><b>{bids} / {asks}</b></div>
@@ -206,7 +206,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* C · Funding */}
-      <section id="sec-funding" ref={(el) => { refs.current.funding = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 130 }}>
+      <section id="sec-funding" ref={(el) => { refs.current.funding = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
         <div className="card">
           <b style={{ color: 'var(--text-strong)' }}>Funding history</b>
           <div className="timeline" style={{ marginTop: 12 }}>
@@ -241,7 +241,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* D · Company Details */}
-      <section id="sec-company" ref={(el) => { refs.current.company = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 130 }}>
+      <section id="sec-company" ref={(el) => { refs.current.company = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
         <div className="card">
           <b style={{ color: 'var(--text-strong)' }}>About {o.name}</b>
           <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '8px 0 0' }}>{ext.overview}</p>
@@ -272,7 +272,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* E · FAQs */}
-      <section id="sec-faqs" ref={(el) => { refs.current.faqs = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 130 }}>
+      <section id="sec-faqs" ref={(el) => { refs.current.faqs = el; }} style={{ display: 'grid', gap: 12, scrollMarginTop: 108 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 12 }} className="faq-grid">
           <div>
             <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 8, fontSize: 14 }}>Buyer FAQs</div>
@@ -286,7 +286,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* F · News */}
-      <section id="sec-news" ref={(el) => { refs.current.news = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 130 }}>
+      <section id="sec-news" ref={(el) => { refs.current.news = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 108 }}>
         <b style={{ color: 'var(--text-strong)' }}>News & highlights</b>
         <div className="grid-posts" style={{ gridTemplateColumns: 'repeat(2, minmax(0,1fr))' }}>
           {news.map((n, i) => (
@@ -300,7 +300,7 @@ export default function OpportunityDetail() {
       </section>
 
       {/* G · Similar matrix */}
-      <section id="sec-similar" ref={(el) => { refs.current.similar = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 130 }}>
+      <section id="sec-similar" ref={(el) => { refs.current.similar = el; }} style={{ display: 'grid', gap: 8, scrollMarginTop: 108 }}>
         <b style={{ color: 'var(--text-strong)' }}>Similar companies</b>
         <div className="card" style={{ overflowX: 'auto' }}>
           <table className="grid compact-table" style={{ minWidth: 760 }}>

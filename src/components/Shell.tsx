@@ -1,4 +1,5 @@
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Bell, Search, Building2, LayoutGrid, Star, Landmark, FolderOpen,
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 import { logout, type RootState } from '../store';
 import { Menu } from './Menu';
+import Sidebar from './Sidebar';
 import { toggleTheme, useTheme } from '../theme';
 
 function initials(email: string) {
@@ -16,16 +18,25 @@ function initials(email: string) {
 }
 
 const icon = (el: React.ReactNode) => <span style={{ display: 'inline-flex' }}>{el}</span>;
+const SIDE_KEY = 'tsg.side';
+function loadMini() {
+  try { const v = localStorage.getItem(SIDE_KEY); return v === null ? true : v === '1'; } catch { return true; }
+}
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const auth = useSelector((s: RootState) => s.auth);
   const dispatch = useDispatch();
-  const nav = useNavigate();
-  const loc = useLocation();
+  const navigate = useNavigate();
   const theme = useTheme();
-  const isAdmin = auth.user && ['admin', 'fund_manager', 'monitor'].includes(auth.user.roleGroup);
-  const exploring = loc.pathname.startsWith('/opportunities') || loc.pathname.startsWith('/funds') || loc.pathname === '/watchlist';
-  const active = loc.pathname.startsWith('/indications') || loc.pathname.startsWith('/portfolio') || loc.pathname.startsWith('/transactions') || loc.pathname.startsWith('/documents');
+  const [mini, setMini] = useState(loadMini);
+  const railed = !!auth.user && auth.user.roleGroup !== 'investor';
+
+  const flipMini = () => {
+    setMini((m) => {
+      try { localStorage.setItem(SIDE_KEY, m ? '0' : '1'); } catch { /* */ }
+      return !m;
+    });
+  };
 
   const exploreItems = [
     { icon: icon(<LayoutGrid size={18} />), title: 'Market Opportunities', desc: 'Find active opportunities to invest in', to: '/opportunities' },
@@ -45,36 +56,37 @@ export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ minHeight: '100vh' }}>
       <header className="t-header">
-        <div className="t-container" style={{ height: 64, display: 'flex', alignItems: 'center', gap: 24 }}>
-          <Link to="/" style={{ font: '700 18px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 26, height: 26, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 15 }}>T</span>
+        <div className="t-container" style={{ height: 56, display: 'flex', alignItems: 'center', gap: 20 }}>
+          <Link to="/" style={{ font: '700 17px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--sentinel-purple)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
             TERMINAONE
           </Link>
           <div className="t-search-wrap hide-md">
-            <Search size={16} />
+            <Search size={15} />
             <input className="t-search" placeholder="Search for companies" aria-label="Search" />
           </div>
-          <nav className="t-nav hide-md">
+          {!railed && (
+            <nav className="t-nav hide-md">
+              {auth.user ? (
+                <>
+                  <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
+                  <Menu label="Explore" items={exploreItems} active={location.pathname.startsWith('/opportunities') || location.pathname.startsWith('/funds')} />
+                  <Menu label="My Activity" items={activityItems} active={location.pathname.startsWith('/indications') || location.pathname.startsWith('/portfolio')} />
+                </>
+              ) : (
+                <>
+                  <Menu label="Explore" items={[exploreItems[0], exploreItems[1], exploreItems[3]]} />
+                  <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>Insights</NavLink>
+                </>
+              )}
+            </nav>
+          )}
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
             {auth.user ? (
               <>
-                <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>Dashboard</NavLink>
-                <Menu label="Explore" items={exploreItems} active={exploring} />
-                <Menu label="My Activity" items={activityItems} active={active} />
-                {isAdmin && <NavLink to="/admin" className={({ isActive }) => (isActive ? 'active' : '')}>Admin</NavLink>}
-              </>
-            ) : (
-              <>
-                <Menu label="Explore" items={exploreItems.slice(0, 2).concat(exploreItems.slice(3))} />
-                <NavLink to="/insights" className={({ isActive }) => (isActive ? 'active' : '')}>Insights</NavLink>
-              </>
-            )}
-          </nav>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-            {auth.user ? (
-              <>
-                <Link to="/indications/new" className="btn btn-outline hide-md" style={{ height: 36 }}>Buy Or Sell</Link>
+                {!railed && <Link to="/indications/new" className="btn btn-outline hide-md" style={{ height: 34 }}>Buy Or Sell</Link>}
                 <Link to="/notifications" className="t-iconbtn" aria-label="Notifications">
-                  <Bell size={18} />
+                  <Bell size={16} />
                   <span className="t-dot" />
                 </Link>
                 <Menu
@@ -93,23 +105,32 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     },
                     { icon: icon(<Moon size={16} />), title: theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode', onClick: toggleTheme },
                     { icon: icon(<ShieldCheck size={16} />), title: 'Security center', to: '/settings' },
-                    { icon: icon(<LogOut size={16} />), title: 'Log out', onClick: () => { dispatch(logout()); nav('/'); } },
+                    { icon: icon(<LogOut size={16} />), title: 'Log out', onClick: () => { dispatch(logout()); navigate('/'); } },
                   ]}
                 />
               </>
             ) : (
               <>
                 <NavLink to="/auth/login" className="link-more hide-md">Log In</NavLink>
-                <Link to="/auth/login" className="btn btn-primary" style={{ height: 36 }}>Sign up</Link>
+                <Link to="/auth/login" className="btn btn-primary" style={{ height: 34 }}>Sign up</Link>
               </>
             )}
           </div>
         </div>
       </header>
-      <main className="t-container" style={{ paddingTop: 32, paddingBottom: 48 }}>{children}</main>
+
+      {railed && auth.user ? (
+        <div className="t-container app-shell">
+          <Sidebar role={auth.user.roleGroup} mini={mini} onToggle={flipMini} />
+          <div className="content"><main>{children}</main></div>
+        </div>
+      ) : (
+        <main className="t-container" style={{ paddingTop: 16, paddingBottom: 28 }}>{children}</main>
+      )}
+
       <footer className="t-footer">
-        <div className="t-container" style={{ padding: '20px 24px 24px', fontSize: 11, color: 'var(--text-subtle)' }}>
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
+        <div className="t-container" style={{ padding: '14px 16px 16px', fontSize: 11, color: 'var(--text-subtle)' }}>
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 6 }}>
             <Link to="/insights">Terms of Use</Link>
             <Link to="/insights">Privacy Policy</Link>
             <Link to="/insights">Disclosures</Link>
@@ -131,10 +152,10 @@ export const Card = ({ children }: { children: React.ReactNode }) => (
   <div className="card">{children}</div>
 );
 export const Empty = ({ text }: { text: string }) => (
-  <div style={{ border: '1px dashed var(--border-default)', borderRadius: 12, padding: 24, textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>{text}</div>
+  <div style={{ border: '1px dashed var(--border-default)', borderRadius: 10, padding: 18, textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>{text}</div>
 );
 export const Err = ({ text, onRetry }: { text: string; onRetry?: () => void }) => (
-  <div style={{ border: '1px solid var(--danger)', background: 'var(--warn-bg)', borderRadius: 8, padding: 16, fontSize: 13 }}>Error: {text} {onRetry && <button style={{ textDecoration: 'underline' }} onClick={onRetry}>Retry</button>}</div>
+  <div style={{ border: '1px solid var(--danger)', background: 'var(--warn-bg)', borderRadius: 8, padding: 12, fontSize: 12 }}>Error: {text} {onRetry && <button style={{ textDecoration: 'underline' }} onClick={onRetry}>Retry</button>}</div>
 );
 export const Skeleton = () => (
   <div className="card" style={{ color: 'var(--text-subtle)' }}>Loading…</div>
