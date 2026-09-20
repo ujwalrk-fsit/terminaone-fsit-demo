@@ -16,8 +16,11 @@ const seedMap: Record<Coll, unknown[]> = {
 };
 
 let cache: Record<string, { _id: string }[]> | null = null;
+// Cached snapshots per collection: getSnapshot must return the SAME reference
+// until the store changes, otherwise React re-renders in an infinite loop.
+let snaps: Record<string, { _id: string }[]> = {};
 const subs = new Set<() => void>();
-function emit() { subs.forEach((l) => l()); }
+function emit() { snaps = {}; subs.forEach((l) => l()); }
 function subscribe(fn: () => void) { subs.add(fn); return () => { subs.delete(fn); }; }
 
 function raw(): Record<string, { _id: string }[]> {
@@ -51,5 +54,13 @@ export function resetDb() {
   cache = null; emit();
 }
 export function useColl<T extends { _id: string }>(coll: Coll): T[] {
-  return useSyncExternalStore(subscribe, () => all<T>(coll), () => (seedMap[coll] as T[]).slice());
+  return useSyncExternalStore(
+    subscribe,
+    () => {
+      let s = snaps[coll] as T[] | undefined;
+      if (!s) { s = all<T>(coll); snaps[coll] = s; }
+      return s;
+    },
+    () => seedMap[coll] as T[],
+  );
 }
