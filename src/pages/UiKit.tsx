@@ -29,7 +29,7 @@ export default function UiKit() {
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div className="section-head" style={{ margin: 0 }}>
-        <h2>UI kit <span className="page-h sub">— v2 tokens & components for review</span></h2>
+        <h2>UI kit <span className="page-h sub">: v2 tokens and components for review</span></h2>
         <button className="btn btn-ghost" onClick={toggleTheme}>
           {theme === 'light' ? 'Preview dark mode' : 'Preview light mode'}
         </button>
@@ -45,7 +45,7 @@ export default function UiKit() {
             </div>
           ))}
         </div>
-        <h3 style={{ margin: '16px 0 8px', color: 'var(--text-strong)' }}>Chart palette (series 1–6)</h3>
+        <h3 style={{ margin: '16px 0 8px', color: 'var(--text-strong)' }}>Chart palette (series 1 to 6)</h3>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {chartPalette.map((c) => (
             <span key={c} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
@@ -65,7 +65,7 @@ export default function UiKit() {
           <button className="btn" disabled>Disabled</button>
           <a className="link-more" href="#/ui-kit">Text link <ArrowRight size={16} /></a>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 8 }}>Black pill = selection/secondary CTAs · Accent blue (white on deep, 6.7:1) = primary money actions · Green/red text uses AA-graded text tokens — blue is never a gain signal.</div>
+        <div style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 8 }}>Black pill = selection and secondary CTAs · Accent blue (white on deep, 6.7:1) = primary money actions · Green and red text uses AA-graded text tokens: blue is never a gain signal.</div>
       </Card>
 
       <Card>
@@ -114,10 +114,10 @@ export default function UiKit() {
       <Card>
         <h3 style={{ margin: '0 0 12px', color: 'var(--text-strong)' }}>Type scale</h3>
         <div style={{ display: 'grid', gap: 8 }}>
-          <div style={{ font: '600 28px/34px var(--font-display)', color: 'var(--text-strong)' }}>Heading — Inter 600</div>
-          <div style={{ font: '400 14px/21px var(--font-body)' }}>Body — Inter, for labels, headers and prose.</div>
-          <div style={{ font: '500 14px/21px var(--font-body)' }}>Body medium — Inter 500 for emphasis.</div>
-          <div className="tnum" style={{ fontSize: 32, color: 'var(--text-strong)' }}>$8,140,128 — Geist Mono figures</div>
+          <div style={{ font: '600 28px/34px var(--font-display)', color: 'var(--text-strong)' }}>Heading: Inter 600</div>
+          <div style={{ font: '400 14px/21px var(--font-body)' }}>Body: Inter, for labels, headers and prose.</div>
+          <div style={{ font: '500 14px/21px var(--font-body)' }}>Body medium: Inter 500 for emphasis.</div>
+          <div className="tnum" style={{ fontSize: 32, color: 'var(--text-strong)' }}>$8,140,128: Geist Mono figures</div>
           <div className="tnum" style={{ fontSize: 13, color: 'var(--text-muted)' }}>$289.16 · table numerics align on decimals</div>
         </div>
       </Card>

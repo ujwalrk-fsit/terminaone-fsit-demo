@@ -24,7 +24,7 @@ export function BrandPanel() {
       <h1>Welcome to your one-stop shop for private markets</h1>
       <div className="auth-prop">
         <span className="ic"><PieChart size={16} /></span>
-        <span><b>Smart diversification</b><small>Gain broad exposure to private equity, real estate, private credit, and more — all in one place.</small></span>
+        <span><b>Smart diversification</b><small>Gain broad exposure to private equity, real estate, private credit, and more, all in one place.</small></span>
       </div>
       <div className="auth-prop">
         <span className="ic"><Landmark size={16} /></span>
@@ -32,7 +32,7 @@ export function BrandPanel() {
       </div>
       <div className="auth-prop">
         <span className="ic"><SlidersHorizontal size={16} /></span>
-        <span><b>Invest your way</b><small>Build your own portfolio — or let our automated investing solution handle everything for you.</small></span>
+        <span><b>Invest your way</b><small>Build your own portfolio, or let our automated investing solution handle everything for you.</small></span>
       </div>
     </div>
   );

@@ -14,9 +14,9 @@ import { Card, Empty } from '../components/Shell';
 
 function downloadFile(f: DataFile) {
   const lines = [
-    `${f.title} — v${latest(f).v} (${f.fileType})`, `Fund: ${fundName(f.fundId)}`, `Folder: ${f.folder} · Status: ${f.status}`,
+    `${f.title}: v${latest(f).v} (${f.fileType})`, `Fund: ${fundName(f.fundId)}`, `Folder: ${f.folder} · Status: ${f.status}`,
     '', f.summary, '', 'VERSION HISTORY',
-    ...[...f.versions].reverse().map((v) => `v${v.v} · ${v.uploadedAt} · ${actorName(v.uploadedBy)} · ${fmtSize(v.sizeKb)} — ${v.note}`),
+    ...[...f.versions].reverse().map((v) => `v${v.v} · ${v.uploadedAt} · ${actorName(v.uploadedBy)} · ${fmtSize(v.sizeKb)}: ${v.note}`),
   ];
   const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/plain' }));
   const a = document.createElement('a');

@@ -57,7 +57,7 @@ export default function Onboarding() {
         </div>
       </div>
       <div className="wizard-steps">{STEPS.map((s, i) => <i key={s} className={i <= Math.min(step, 5) ? 'on' : ''} title={s} />)}</div>
-      <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Section {Math.min(step + 1, 6)} of 6 — {STEPS[Math.min(step, 5)]}</div>
+      <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Section {Math.min(step + 1, 6)} of 6: {STEPS[Math.min(step, 5)]}</div>
 
       {step === 0 && <Card><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <label style={{ fontSize: 12 }}>First name<input style={input} autoComplete="given-name" value={d.firstName ?? ''} onChange={(e) => set('firstName', e.target.value)} /></label>
@@ -77,13 +77,13 @@ export default function Onboarding() {
 
       {step === 2 && <Card><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <label style={{ fontSize: 12 }}>Annual income<select style={input} value={d.income ?? ''} onChange={(e) => set('income', e.target.value)}>
-          <option value="">Select…</option><option>Under $100K</option><option>$100K – $500K</option><option>$500K – $2M</option><option>Above $2M</option>
+          <option value="">Select…</option><option>Under $100K</option><option>$100K to $500K</option><option>$500K to $2M</option><option>Above $2M</option>
         </select></label>
         <label style={{ fontSize: 12 }}>Net worth<select style={input} value={d.worth ?? ''} onChange={(e) => set('worth', e.target.value)}>
-          <option value="">Select…</option><option>Under $1M</option><option>$1M – $5M</option><option>Above $5M</option>
+          <option value="">Select…</option><option>Under $1M</option><option>$1M to $5M</option><option>Above $5M</option>
         </select></label>
         <label style={{ fontSize: 12 }}>Investing experience<select style={input} value={d.experience ?? ''} onChange={(e) => set('experience', e.target.value)}>
-          <option value="">Select…</option><option>Under 2 years</option><option>2 – 5 years</option><option>Above 5 years</option>
+          <option value="">Select…</option><option>Under 2 years</option><option>2 to 5 years</option><option>Above 5 years</option>
         </select></label>
         <label style={{ fontSize: 12 }}>Tax residency<select style={input} value={d.tax ?? 'Resident'} onChange={(e) => set('tax', e.target.value)}>
           <option>Resident</option><option>NRI / Non-resident</option>
@@ -114,7 +114,7 @@ export default function Onboarding() {
       </Card>}
 
       {step === 6 && <Card>
-        <div style={{ fontWeight: 700, color: 'var(--success)' }}>Submitted — your account is now in review.</div>
+        <div style={{ fontWeight: 700, color: 'var(--success)' }}>Submitted. Your account is now in review.</div>
         <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
           <Link to="/opportunities" className="btn btn-primary">Browse opportunities <ArrowRight size={14} /></Link>
         </div>

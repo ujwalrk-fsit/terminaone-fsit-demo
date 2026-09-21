@@ -57,7 +57,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <a href="#main-content" className="sr-only skip-link">Skip to main content</a>
       <ConfirmHost />
       <LiveHost />
@@ -65,7 +65,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="t-container" style={{ height: 56, display: 'flex', alignItems: 'center', gap: 20 }}>
           <Link to="/" translate="no" style={{ font: '700 17px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--brand-blue)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
-            TERMINAONE
+            TerminaOne&nbsp;Demo
           </Link>
           <div className="hide-md"><SearchBox /></div>
           {!railed && (
@@ -130,10 +130,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {railed && auth.user ? (
         <div className="t-container app-shell">
           <Sidebar role={auth.user.roleGroup} mini={mini} onToggle={flipMini} />
-          <div className="content"><main id="main-content" tabIndex={-1}>{children}</main></div>
+          <div className="content" style={{ flex: 1 }}><main id="main-content" tabIndex={-1}>{children}</main></div>
         </div>
       ) : (
-        <main id="main-content" tabIndex={-1} className="t-container" style={{ paddingTop: 16, paddingBottom: 28 }}>{children}</main>
+        <main id="main-content" tabIndex={-1} className="t-container" style={{ paddingTop: 16, paddingBottom: 28, flex: 1, width: '100%', boxSizing: 'border-box' }}>{children}</main>
       )}
 
       <footer className="t-footer">

@@ -203,7 +203,7 @@ export function IndicationNew() {
 
   return (
     <div style={{ maxWidth: 680, margin: '0 auto', display: 'grid', gap: 14 }}>
-      <h1 style={{ font: '700 24px/30px var(--font-display)', color: 'var(--text-strong)', margin: 0 }}>New indication — {fund.fundName}</h1>
+      <h1 style={{ font: '700 24px/30px var(--font-display)', color: 'var(--text-strong)', margin: 0 }}>New indication: {fund.fundName}</h1>
       <div className="wizard-steps" aria-hidden="true">{[1, 2, 3, 4, 5].map((s) => <i key={s} className={s <= Math.min(step, 5) ? 'on' : ''} />)}</div>
       <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Step {Math.min(step, 5)} of 5 · Account → Units → Transfer → Sign → Review {proof && '· proof ✓'} {sig && `· signed (${sig.mode}) ✓`}</div>
       {step === 1 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--text-strong)' }}>1. Account</div>
@@ -233,7 +233,7 @@ export function IndicationNew() {
         <div className="risk-note" style={{ marginTop: 12 }}><b>Before you submit:</b> this interest is non-binding until fund approval. Private interests are illiquid.</div>
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}><button className="btn btn-ghost" onClick={() => setStep(4)}>Back</button>
         <button className="btn btn-accent" onClick={submit}>Submit indication</button></div></Card>}
-      {step === 6 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--success)' }}>Submitted ✓ — your indication is now awaiting approval.</div><Link to="/indications" className="link-more" style={{ marginTop: 8 }}>Back to list <ArrowRight size={16} /></Link></Card>}
+      {step === 6 && <Card><div style={{ font: '700 15px var(--font-display)', color: 'var(--success)' }}>Submitted ✓. Your indication is now awaiting approval.</div><Link to="/indications" className="link-more" style={{ marginTop: 8 }}>Back to list <ArrowRight size={16} /></Link></Card>}
     </div>
   );
 }

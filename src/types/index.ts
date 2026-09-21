@@ -10,7 +10,7 @@ export interface Role { _id: string; name: string; roleGroup: RoleGroup; permiss
 export interface AppUser {
   _id: string; firstName: string; lastName: string; emailId: string;
   roleGroup: RoleGroup; roleId: string; status: 'active' | 'pending' | 'deactivated';
-  investorStatus?: string; password: string; // sample credentials for the reference build
+  investorStatus?: string; tier?: 'Lite' | 'Plus' | 'Pro'; password: string; // sample credentials for the reference build
 }
 
 export interface JwtPayload { sub: string; email: string; roleGroup: RoleGroup; permissions: Permission[]; }

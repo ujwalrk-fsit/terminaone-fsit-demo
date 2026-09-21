@@ -75,7 +75,7 @@ export function Signup() {
             upsert('users', {
               _id: `u_${Date.now()}`, firstName: v.firstName, lastName: v.lastName,
               emailId: v.email.toLowerCase(), roleGroup: 'investor' as RoleGroup, roleId: 'r_investor',
-              status: 'pending', investorStatus: 'PENDING_ONBOARDING', password: v.password,
+              status: 'pending', investorStatus: 'PENDING_ONBOARDING', tier: 'Lite', password: v.password,
             });
             try { dispatch(login({ email: v.email, password: v.password })); announce('Account created. Continue to setup.'); } catch { const m = 'Account created. Please log in.'; setErr(m); announce(m); return; }
             navigate('/onboarding');

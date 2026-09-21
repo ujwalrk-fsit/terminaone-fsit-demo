@@ -19,6 +19,9 @@ import Funds from './pages/Funds';
 import UiKit from './pages/UiKit';
 import DataRoom from './pages/DataRoom';
 import DataRoomDetail from './pages/DataRoomDetail';
+import Ledger from './pages/Ledger';
+import Investors from './pages/Investors';
+import Signing from './pages/Signing';
 import { Insights, InsightDetail, Signup, Forgot } from './pages/Misc';
 import Onboarding from './pages/Onboarding';
 
@@ -73,6 +76,9 @@ export default function App() {
         <Route path="/funds" element={<Funds />} />
         <Route path="/data-room" element={<RequireAuth><DataRoom /></RequireAuth>} />
         <Route path="/data-room/:fundId" element={<RequireAuth><DataRoomDetail /></RequireAuth>} />
+        <Route path="/ledger" element={<RequireAuth><Ledger /></RequireAuth>} />
+        <Route path="/investors" element={<RequireAuth><Investors /></RequireAuth>} />
+        <Route path="/signing" element={<RequireAuth><Signing /></RequireAuth>} />
         <Route path="/ui-kit" element={<UiKit />} />
         {/* legacy alias: /marketplace -> /opportunities */}
         <Route path="/marketplace" element={<Navigate to="/opportunities" replace />} />
@@ -92,7 +98,7 @@ export default function App() {
         <Route path="/notifications" element={<RequireAuth><Notifications /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
-        <Route path="*" element={<div>404 — route not found (edge case). <a href="/" className="underline">Home</a></div>} />
+        <Route path="*" element={<div>404: route not found. <a href="/" className="underline">Home</a></div>} />
       </Routes>
     </Shell>
   );

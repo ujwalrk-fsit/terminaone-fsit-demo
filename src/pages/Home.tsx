@@ -67,6 +67,114 @@ function MarketAside() {
   );
 }
 
+function Landing({ opportunities, funds, articles, users }: {
+  opportunities: Opportunity[]; funds: FundOffering[]; articles: Article[]; users: AppUser[];
+}) {
+  const live = funds.filter((f) => f.status === 'live');
+  const raised = funds.reduce((a, f) => a + (f.raised ?? 0), 0);
+  const investors = users.filter((u) => u.roleGroup === 'investor').length;
+  const top = [...opportunities].sort((a, b) => a.rank - b.rank).slice(0, 6);
+  const liveFunds = live.slice(0, 3);
+  const posts = articles.filter((a) => a.status === 'published').slice(0, 3);
+  const money = (n: number) => n >= 1_000_000 ? `$${(n / 1_000_000).toFixed(1)}M` : `$${Math.round(n / 1_000)}K`;
+  return (
+    <div style={{ display: 'grid', gap: 28 }}>
+      <section style={{ textAlign: 'center', padding: '40px 16px 8px', maxWidth: 860, margin: '0 auto' }}>
+        <span className="pill pill-brand">Private markets, modernized</span>
+        <h1 style={{ font: '600 clamp(30px,4.5vw,52px)/1.1 var(--font-display)', letterSpacing: '-0.02em', color: 'var(--text-strong)', margin: '16px 0 0' }}>
+          Buy and sell pre-IPO shares with confidence
+        </h1>
+        <p style={{ fontSize: 16, color: 'var(--text-muted)', marginTop: 12 }}>
+          Live pricing, curated funds and guided checkout across {opportunities.length} tracked companies.
+        </p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 20, flexWrap: 'wrap' }}>
+          <Link to="/opportunities" className="btn btn-accent" style={{ height: 44, padding: '0 28px' }}>Browse opportunities</Link>
+          <Link to="/auth/signup" className="btn btn-ghost" style={{ height: 44, padding: '0 28px' }}>Create account</Link>
+        </div>
+        <div style={{ display: 'flex', gap: 28, justifyContent: 'center', marginTop: 28, flexWrap: 'wrap' }}>
+          <div><div className="tnum" style={{ font: '600 24px var(--font-display)', color: 'var(--text-strong)' }}>{live.length}</div><div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Live funds</div></div>
+          <div><div className="tnum" style={{ font: '600 24px var(--font-display)', color: 'var(--text-strong)' }}>{opportunities.length}</div><div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Tracked companies</div></div>
+          <div><div className="tnum" style={{ font: '600 24px var(--font-display)', color: 'var(--text-strong)' }}>{money(raised)}</div><div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Raised across funds</div></div>
+          <div><div className="tnum" style={{ font: '600 24px var(--font-display)', color: 'var(--text-strong)' }}>{investors}</div><div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>Registered investors</div></div>
+        </div>
+      </section>
+
+      <section>
+        <div className="section-head">
+          <h2>Top opportunities</h2>
+          <Link to="/opportunities" className="btn btn-ghost">View all <ArrowRight size={16} /></Link>
+        </div>
+        <div className="dtable">
+          <table className="grid" style={{ minWidth: 760 }}>
+            <thead><tr><th>#</th><th>Company</th><th>Sector</th><th>TSG Price</th><th>1Y</th><th>Last Round</th><th>Valuation</th><th>Activity</th><th /></tr></thead>
+            <tbody>
+              {top.map((o) => (
+                <tr key={o._id}>
+                  <td className="tnum">{o.rank}</td>
+                  <td><Link to={`/opportunities/${o._id}`} style={{ fontWeight: 600, color: 'var(--text-strong)', textDecoration: 'none' }}>{o.name}</Link></td>
+                  <td>{o.sector}</td>
+                  <td className="tnum"><b>{o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'N/A'}</b></td>
+                  <td className={`tnum ${o.priceChange1Y != null && o.priceChange1Y >= 0 ? 'up' : 'down'}`}>{o.priceChange1Y != null ? `${o.priceChange1Y}%` : '—'}</td>
+                  <td>{o.lastRound?.round ?? '—'}</td>
+                  <td className="tnum">{o.lastRound ? `$${(o.lastRound.valuation / 1e9).toFixed(1)}B` : '—'}</td>
+                  <td>{o.activity}</td>
+                  <td><Link to={`/opportunities/${o._id}`} className="link-more" style={{ fontSize: 12 }}>View</Link></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div className="section-head">
+          <h2>Live fund offerings</h2>
+          <Link to="/funds" className="btn btn-ghost">View all <ArrowRight size={16} /></Link>
+        </div>
+        <div style={{ display: 'grid', gap: 8 }}>
+          {liveFunds.map((f) => {
+            const pct = f.raised && f.offeringSize ? Math.min(100, Math.round((f.raised / f.offeringSize) * 100)) : 0;
+            return (
+              <div key={f._id} className="card" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ flex: '2 1 220px' }}>
+                  <div style={{ fontWeight: 600, color: 'var(--text-strong)' }}>{f.fundName}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-subtle)' }}>{f.sector} · min ${f.minimumInvestment.toLocaleString()}</div>
+                </div>
+                <div style={{ flex: '3 1 240px' }}>
+                  <div className="progress" style={{ marginTop: 0 }}><span style={{ width: `${pct}%` }} /></div>
+                  <div className="tnum" style={{ fontSize: 12, marginTop: 4 }}><strong style={{ color: 'var(--success-text)' }}>{money(f.raised ?? 0)}</strong> <span style={{ color: 'var(--text-subtle)' }}>of {money(f.offeringSize)} · {pct}%</span></div>
+                </div>
+                <Link to={`/indications/new?fund=${f._id}`} className="btn btn-accent" style={{ height: 34 }}>Express interest</Link>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <div className="section-head">
+          <h2>Insights</h2>
+          <Link to="/insights" className="btn btn-ghost">View all <ArrowRight size={16} /></Link>
+        </div>
+        <div className="grid-posts">
+          {posts.map((a) => (
+            <article key={a._id} className="post">
+              <Link to={`/insights/${a._id}`} className="post__media" aria-label={a.title}>
+                <span className="fill" aria-hidden="true">{a.title.charAt(0)}</span>
+                <span className="pill pill-brand post__tag">{a.category}</span>
+              </Link>
+              <h3><Link to={`/insights/${a._id}`}>{a.title}</Link></h3>
+              <p className="post__meta"><span>TSG Invest</span><span>{a.updatedAt}</span></p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative. Not investment advice.</div>
+    </div>
+  );
+}
+
 export default function Home() {
   const auth = useSelector((s: RootState) => s.auth);
   const first = auth.user ? auth.user.email.split('@')[0] : 'Drew';
@@ -81,6 +189,10 @@ export default function Home() {
   }));
   const posts = articles.filter((a) => a.status === 'published').slice(0, 3);
   const adv = users.find((u) => u.roleGroup === 'advisor') ?? users[0];
+
+  if (!auth.user) {
+    return <Landing opportunities={opportunities} funds={funds} articles={articles} users={users} />;
+  }
 
   return (
     <div style={{ display: 'grid', gap: 32 }}>

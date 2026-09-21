@@ -8,6 +8,7 @@ import { useColl } from '../db';
 import type { FundOffering, Indication, InvestorAccount, Opportunity, Transfer } from '../types';
 import { priceSeries } from '../data/company';
 import { toggle } from '../store';
+import StaffDash from './StaffDash';
 import { Card, Empty } from '../components/Shell';
 
 function vwap(id: string, ref: number) {
@@ -58,6 +59,8 @@ export default function Dashboard() {
   const txns = useMemo(() => transfers.slice(0, 4), [transfers]);
   const oppOf = (i: Indication) => opportunities.find((o) => o._id === i.opportunityId) ?? opportunities.find((o) => o.fundId === i.fundId);
 
+  if (role && role !== 'investor') return <StaffDash role={role} />;
+
   return (
     <div style={{ display: 'grid', gap: 12 }}>
       <div className="section-head" style={{ margin: 0 }}>
@@ -65,22 +68,11 @@ export default function Dashboard() {
         <span className="pill pill-neutral">{role}</span>
       </div>
 
-      {role === 'investor' && !accounts.some((a) => a.userId === auth.user?.sub && a.status !== 'DRAFT') && (
+      {(role === 'investor' || !role) && !accounts.some((a) => a.userId === auth.user?.sub && a.status !== 'DRAFT') && (
         <div className="notice-banner">
           <span><b>Setup incomplete.</b> Finish your investment account to move indications to allocation.</span>
           <Link to="/onboarding" className="link-more" style={{ fontSize: 12, marginLeft: 'auto' }}>Continue setup</Link>
         </div>
-      )}
-
-      {(role === 'admin' || role === 'fund_manager') && queue.length > 0 && (
-        <Card>
-          <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 6 }}>Approvals queue ({queue.length})</div>
-          {queue.slice(0, 4).map((q) => {
-            const f = funds.find((x) => x._id === q.fundId);
-            return <div key={q._id} className="tnum" style={{ fontSize: 12, padding: '3px 0', borderTop: '1px solid var(--border-subtle)' }}>{q._id} · {f?.fundName} · ${q.investmentAmount.toLocaleString()} · <b>{q.status}</b></div>;
-          })}
-          <Link to="/admin" className="link-more" style={{ fontSize: 12, marginTop: 4 }}>Open admin <ArrowRight size={14} /></Link>
-        </Card>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.4fr)', gap: 12 }} className="dash-grid">

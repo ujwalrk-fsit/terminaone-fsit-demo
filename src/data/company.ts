@@ -43,7 +43,7 @@ export const RANGES = [
 export const companyExt: Record<string, CompanyExt> = {
   o_anduril: {
     website: 'anduril.com', hq: 'Costa Mesa, CA', founded: '2017',
-    overview: 'Anduril builds autonomous defense systems — unmanned aircraft, counter-drone platforms and a software-defined command layer now deployed across US and allied programs.',
+    overview: 'Anduril builds autonomous defense systems: unmanned aircraft, counter-drone platforms and a software-defined command layer now deployed across US and allied programs.',
     investors: ['Founders Fund', 'Andreessen Horowitz', 'General Catalyst', 'Valor Equity'],
     leadership: [{ name: 'Palmer Luckey', role: 'Founder' }, { name: 'Brian Schimpf', role: 'CEO' }, { name: 'Matt Grimm', role: 'COO' }],
     board: ['Trae Stephens', 'Elad Gil', 'Kathryn Griffin'],
@@ -69,7 +69,7 @@ export const companyExt: Record<string, CompanyExt> = {
   },
   o_stripe: {
     website: 'stripe.com', hq: 'San Francisco, CA', founded: '2010',
-    overview: 'Stripe provides payments infrastructure for internet commerce — billing, payouts, fraud prevention and banking-as-a-service for millions of businesses.',
+    overview: 'Stripe provides payments infrastructure for internet commerce: billing, payouts, fraud prevention and banking-as-a-service for millions of businesses.',
     investors: ['Sequoia Capital', 'Andreessen Horowitz', 'General Catalyst', 'Temasek'],
     leadership: [{ name: 'Patrick Collison', role: 'CEO & Co-founder' }, { name: 'John Collison', role: 'President & Co-founder' }, { name: 'Steffan Tomlinson', role: 'CFO' }],
     board: ['Patrick Collison', 'John Collison', 'Michael Moritz'],
@@ -192,8 +192,8 @@ export const companyExt: Record<string, CompanyExt> = {
 
 export const buyerFaqs = [
   { q: 'How do I submit a buy interest?', a: 'Open the opportunity, choose Express interest, enter units, complete the bank transfer with the stated reference, then e-sign. Your indication moves to review once transfer proof is attached.' },
-  { q: 'What is the minimum investment?', a: 'Each fund sets its own minimum — shown on the opportunity card and detail page. Amounts below the minimum cannot be submitted.' },
-  { q: 'How long does settlement take?', a: 'After approval and countersignature, allocation typically completes within 5–10 business days, depending on transfer verification.' },
+  { q: 'What is the minimum investment?', a: 'Each fund sets its own minimum, shown on the opportunity card and detail page. Amounts below the minimum cannot be submitted.' },
+  { q: 'How long does settlement take?', a: 'After approval and countersignature, allocation typically completes within 5 to 10 business days, depending on transfer verification.' },
   { q: 'Can I cancel an indication?', a: 'Yes, while it is in DRAFT, SUBSCRIBED or AWAITING_APPROVAL status. Contact your advisor or use the indications list.' },
 ];
 

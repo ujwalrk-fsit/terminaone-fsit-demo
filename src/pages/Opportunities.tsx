@@ -18,7 +18,7 @@ export default function Opportunities() {
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div className="section-head">
-        <h2>Marketplace — Opportunities</h2>
+        <h2>Marketplace: Opportunities</h2>
         <span className="pill pill-neutral">{list.length} tracked</span>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -36,7 +36,7 @@ export default function Opportunities() {
           {list.map((o) => <OppCard key={o._id} opp={o} fund={funds.find((f) => f._id === o.fundId)} />)}
         </div>
       )}
-      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative — not investment advice.</div>
+      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative. Not investment advice.</div>
     </div>
   );
 }

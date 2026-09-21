@@ -52,7 +52,7 @@ export default function Funds() {
           })}
         </div>
       )}
-      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative — not investment advice.</div>
+      <div className="risk-note"><b>Risk disclosure:</b> private-market interests are illiquid and may lose value. Figures shown are illustrative. Not investment advice.</div>
     </div>
   );
 }

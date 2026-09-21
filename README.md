@@ -46,8 +46,10 @@ Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123
 ## Routes (selection)
 
 /`, `/opportunities`, `/opportunities/:id`, `/funds`, `/data-room`, `/data-room/:fundId`,
-`/dashboard`, `/portfolio`, `/indications`, `/indications/new`, `/onboarding`, `/documents`,
-`/transactions`, `/watchlist`, `/notifications`, `/settings`, `/insights`, `/admin`, `/ui-kit`, `/auth/*`.
+`/dashboard` (investors: Pro terminal; staff: role dashboards), `/portfolio`, `/indications`,
+`/indications/new`, `/onboarding`, `/documents`, `/transactions`, `/watchlist`,
+`/ledger`, `/investors`, `/signing`, `/notifications`, `/settings`, `/insights`,
+`/admin?tab=users|cms` (User Management, Content Hub), `/ui-kit`, `/auth/*`.
 
 ## Working back office (admin / fund_manager)
 

@@ -367,13 +367,13 @@ export default function OpportunityDetail() {
 
       {/* print profile */}
       <div className="print-only" aria-hidden="true">
-        <h1>{o.name} — Company Profile</h1>
+        <h1>{o.name}: Company Profile</h1>
         <p>{ext.overview} Sector: {o.sector} / {o.subSector}. HQ: {ext.hq}. Founded: {ext.founded}. Website: {ext.website}.</p>
         <p>TSG Price: {o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'N/A'} · Last matched: {ext.lastMatched ? `$${ext.lastMatched}` : 'N/A'} · Activity: {o.activity}</p>
         <table><thead><tr><th>Date</th><th>Round</th><th>Raised</th><th>PPS</th><th>Valuation</th><th>Investors</th></tr></thead>
           <tbody>{ext.rounds.map((r) => <tr key={r.round}><td>{r.date}</td><td>{r.round}</td><td>{r.raised}</td><td>{r.pps}</td><td>{r.valuation}</td><td>{r.investors.join(', ')}</td></tr>)}</tbody></table>
         <p>Investors: {ext.investors.join(', ')}. Leadership: {ext.leadership.map((l) => `${l.name} (${l.role})`).join(', ')}. Board: {ext.board.join(', ')}.</p>
-        <p>Illustrative sample data — not investment advice.</p>
+        <p>Illustrative sample data. Not investment advice.</p>
       </div>
       <style>{`@media (max-width: 900px){ .faq-grid{ grid-template-columns: 1fr !important; } }`}</style>
     </div>
@@ -386,7 +386,7 @@ export function CompanyNotice() {
   return (
     <div className="notice-banner no-print" style={{ marginBottom: 14 }}>
       <TriangleAlert size={15} color="var(--warning)" style={{ flex: 'none', marginTop: 2 }} />
-      <span><b>Trading notice:</b> secondary transfers need company ROFR waiver + fund-manager consent. Windows open per fund — check Data Room before expressing interest.</span>
+      <span><b>Trading notice:</b> secondary transfers need company ROFR waiver plus fund-manager consent. Windows open per fund. Check Data Room before expressing interest.</span>
       <button onClick={() => setOff(true)} aria-label="Dismiss" style={{ padding: 6, minWidth: 28, minHeight: 28 }}>✕</button>
     </div>
   );

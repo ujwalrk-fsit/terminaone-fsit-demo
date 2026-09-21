@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { useColl, upsert, remove } from '../db';
+import { useQueryState } from '../url';
 import type { AppUser, FundOffering, FundStatus, Indication, Article, Opportunity, RoleGroup } from '../types';
 import { logs } from '../data/sample';
 import { fmtMoney } from '../components/OppCard';
@@ -10,7 +11,7 @@ import { confirm } from '../components/Confirm';
 import { announce } from '../components/Live';
 import { Card, Empty } from '../components/Shell';
 
-function Denied() { return <Empty text="403 — admin, fund_manager or monitor only." />; }
+function Denied() { return <Empty text="403: admin, fund_manager or monitor only." />; }
 const input = { padding: '8px 10px', width: '100%' } as const;
 const H = ({ children }: { children: React.ReactNode }) => (
   <div style={{ fontWeight: 700, color: 'var(--text-strong)', fontSize: 14, marginBottom: 8 }}>{children}</div>
@@ -28,7 +29,7 @@ function FundEditor({ f, onDone }: { f: FundOffering; onDone: () => void }) {
   const setBank = (k: string, val: string) => setV({ ...v, bankDetails: { ...(v.bankDetails ?? { bankName: '', accountName: '', accountNumber: '', routingCode: '', instructions: '', uploadedBy: 'u_admin', updatedAt: new Date().toISOString().slice(0, 10) }), [k]: val } });
   return (
     <Card>
-      <H>{f._id ? `Edit — ${f.fundName}` : 'New fund'}</H>
+      <H>{f._id ? `Edit: ${f.fundName}` : 'New fund'}</H>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
         <label style={{ fontSize: 12 }}>Name<input style={input} value={v.fundName} onChange={(e) => set('fundName', e.target.value)} /></label>
         <label style={{ fontSize: 12 }}>Status<select style={input} value={v.status} onChange={(e) => set('status', e.target.value as FundStatus)}>
@@ -72,7 +73,7 @@ function UserManager({ me }: { me: string }) {
   return (
     <div style={{ display: 'grid', gap: 8 }}>
       <div className="dtable">
-        <table className="grid"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th /></tr></thead>
+        <table className="grid"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Tier</th><th>Status</th><th /></tr></thead>
           <tbody>
             {upaged.map((u) => (
               <tr key={u._id}>
@@ -82,6 +83,13 @@ function UserManager({ me }: { me: string }) {
                   <select value={u.roleGroup} disabled={u._id === me} onChange={(e) => upsert('users', { ...u, roleGroup: e.target.value as RoleGroup })} style={{ padding: '4px 6px' }}>
                     {ROLES.map((r) => <option key={r}>{r}</option>)}
                   </select>
+                </td>
+                <td>
+                  {u.roleGroup === 'investor' ? (
+                    <select value={u.tier ?? 'Lite'} onChange={(e) => upsert('users', { ...u, tier: e.target.value as 'Lite' | 'Plus' | 'Pro' })} style={{ padding: '4px 6px' }}>
+                      {['Lite', 'Plus', 'Pro'].map((t) => <option key={t}>{t}</option>)}
+                    </select>
+                  ) : <span style={{ color: 'var(--text-subtle)' }}>—</span>}
                 </td>
                 <td>{u.status}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>
@@ -296,7 +304,7 @@ export default function Admin() {
   const role = useSelector((s: RootState) => s.auth.user?.roleGroup);
   const me = useSelector((s: RootState) => s.auth.user?.sub ?? '');
   const funds = useColl<FundOffering>('funds');
-  const [tab, setTab] = useState<'funds' | 'users' | 'roles' | 'indications' | 'cms' | 'market' | 'logs'>('funds');
+  const [tab, setTab] = useQueryState('tab', 'funds') as unknown as ['funds' | 'users' | 'roles' | 'indications' | 'cms' | 'market' | 'logs', (t: string) => void];
   const [cmsTab, setCmsTab] = useState<'articles' | 'opportunities'>('articles');
   const [editFund, setEditFund] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);

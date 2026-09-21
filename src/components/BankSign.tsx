@@ -71,7 +71,7 @@ export function SignPad({ onSign }: { onSign: (dataUrl: string, mode: string) =>
       {mode === 'draw' && (
         <div>
           <canvas ref={canvasRef} width={400} height={140} role="img"
-            aria-label="Signature drawing area. Drawing needs a pointer — typing and file upload above work fully with a keyboard."
+            aria-label="Signature drawing area. Drawing needs a pointer. Typing and file upload above work fully with a keyboard."
             style={{ width: '100%', touchAction: 'none', borderRadius: 8, background: '#fff' }} {...drawHandlers} />
           <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
             <button className="btn btn-ghost" onClick={() => canvasRef.current?.getContext('2d')?.clearRect(0, 0, 400, 140)}>Clear</button>
