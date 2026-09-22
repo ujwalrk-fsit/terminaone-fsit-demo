@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ArrowRight, CheckCircle2, Mail, Phone } from 'lucide-react';
 import { useColl } from '../db';
-import { fmtMoney } from '../format';
+import { fmtMoney, fmtPct } from '../format';
 import type { FundOffering, Opportunity, Article, AppUser } from '../types';
 import type { RootState } from '../store';
 import { OppCard } from '../components/OppCard';
@@ -77,7 +77,9 @@ function Landing({ opportunities, funds, articles, users }: {
   const top = [...opportunities].sort((a, b) => a.rank - b.rank).slice(0, 6);
   const liveFunds = live.slice(0, 3);
   const posts = articles.filter((a) => a.status === 'published').slice(0, 3);
-  const money = (n: number) => n >= 1_000_000 ? `$${(n / 1_000_000).toFixed(1)}M` : `$${Math.round(n / 1_000)}K`;
+  const money = fmtMoney;
+  const activityPill = (a: string) =>
+    a === 'High' ? 'pill-live' : a === 'Medium' ? 'pill-info' : 'pill-neutral';
   return (
     <div style={{ display: 'grid', gap: 28 }}>
       <section style={{ textAlign: 'center', padding: '40px 16px 8px', maxWidth: 860, margin: '0 auto' }}>
@@ -112,13 +114,13 @@ function Landing({ opportunities, funds, articles, users }: {
               {top.map((o) => (
                 <tr key={o._id}>
                   <td className="tnum">{o.rank}</td>
-                  <td><Link to={`/opportunities/${o._id}`} style={{ fontWeight: 600, color: 'var(--text-strong)', textDecoration: 'none' }}>{o.name}</Link></td>
+                  <td><Link to={`/opportunities/${o._id}`} className="link-more" style={{ color: 'var(--text-strong)', fontWeight: 600 }}>{o.name}</Link></td>
                   <td>{o.sector}</td>
                   <td className="tnum"><b>{o.tsgPrice ? `$${o.tsgPrice.toFixed(2)}` : 'N/A'}</b></td>
-                  <td className={`tnum ${o.priceChange1Y != null && o.priceChange1Y >= 0 ? 'up' : 'down'}`}>{o.priceChange1Y != null ? `${o.priceChange1Y}%` : '—'}</td>
+                  <td className={`tnum ${o.priceChange1Y != null && o.priceChange1Y >= 0 ? 'up' : 'down'}`}>{o.priceChange1Y != null ? fmtPct(o.priceChange1Y, 1) : '—'}</td>
                   <td>{o.lastRound?.round ?? '—'}</td>
                   <td className="tnum">{o.lastRound ? fmtMoney(o.lastRound.valuation) : '—'}</td>
-                  <td>{o.activity}</td>
+                  <td><span className={`pill ${activityPill(o.activity)}`}>{o.activity}</span></td>
                   <td><Link to={`/opportunities/${o._id}`} className="link-more" style={{ fontSize: 12 }}>View</Link></td>
                 </tr>
               ))}
