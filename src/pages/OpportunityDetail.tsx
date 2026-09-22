@@ -213,7 +213,7 @@ export default function OpportunityDetail() {
           <div className="tnum" style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
             <span>High <b style={{ color: 'var(--text-strong)' }}>${hi.toFixed(2)}</b></span>
             <span>Low <b style={{ color: 'var(--text-strong)' }}>${lo.toFixed(2)}</b></span>
-            <span>TSG Valuation <b style={{ color: 'var(--text-strong)' }}>{o.lastRound ? `$${(o.lastRound.valuation / 1e9).toFixed(1)}B` : '—'}</b></span>
+            <span>TSG Valuation <b style={{ color: 'var(--text-strong)' }}>{o.lastRound ? fmtMoney(o.lastRound.valuation) : '—'}</b></span>
           </div>
         </div>
 
@@ -238,7 +238,7 @@ export default function OpportunityDetail() {
                 <span className="timeline__dot" />
                 <div style={{ fontWeight: 700, color: 'var(--text-strong)', fontSize: 13 }}>{r.round} · {r.date}</div>
                 <div className="tnum" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                  {r.raised > 0 ? `${fmtMoney(r.raised)} raised · ` : ''}${(r.valuation / 1e9).toFixed(1)}B post-money{r.pps > 0 && ` · $${r.pps.toFixed(2)}/share`}
+                  {r.raised > 0 ? `${fmtMoney(r.raised)} raised · ` : ''}{fmtMoney(r.valuation)} post-money{r.pps > 0 && ` · $${r.pps.toFixed(2)}/share`}
                 </div>
               </div>
             ))}
@@ -254,7 +254,7 @@ export default function OpportunityDetail() {
                   <td className="tnum">{r.date}</td><td><b style={{ color: 'var(--text-strong)' }}>{r.round}</b></td>
                   <td className="tnum">{r.raised > 0 ? fmtMoney(r.raised) : '—'}</td>
                   <td className="tnum">{r.pps > 0 ? `$${r.pps.toFixed(2)}` : '—'}</td>
-                  <td className="tnum">${(r.valuation / 1e9).toFixed(1)}B</td>
+                  <td className="tnum">{fmtMoney(r.valuation)}</td>
                   <td style={{ fontSize: 12 }}>{r.investors.join(', ')}</td><td style={{ fontSize: 12 }}>{r.liquidation}</td>
                 </tr>
               ))}
@@ -342,7 +342,7 @@ export default function OpportunityDetail() {
                     <td className="tnum">{p.tsgPrice ? `$${p.tsgPrice.toFixed(2)}` : '—'}</td>
                     <td className="tnum">{e.lastMatched ? `$${e.lastMatched.toFixed(2)}` : '—'}</td>
                     <td>{lr.round}</td>
-                    <td className="tnum">${(lr.valuation / 1e9).toFixed(1)}B</td>
+                    <td className="tnum">{fmtMoney(lr.valuation)}</td>
                     <td className="tnum">{lr.pps > 0 ? `$${lr.pps.toFixed(2)}` : '—'}</td>
                     <td className="tnum">{lr.raised > 0 ? fmtMoney(lr.raised) : '—'}</td>
                   </tr>
