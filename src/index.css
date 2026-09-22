@@ -101,7 +101,8 @@ a { color: var(--link); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
 /* ---- layout ---- */
-.t-container { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+.t-container { max-width: none; margin: 0 auto; padding: 0 20px; }
+.bare-auth { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 24px 16px; }
 
 /* ---- header (56px, flat) ---- */
 .t-header { position: sticky; top: 0; z-index: 40; background: var(--bg-sunken); border-bottom: 1px solid var(--border-default); }

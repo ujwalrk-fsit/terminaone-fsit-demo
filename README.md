@@ -13,7 +13,7 @@ pnpm build    # tsc + vite -> dist
 
 Env (`.env.example`): `VITE_API_URL`, `VITE_MOCK_MODE=true`, `VITE_SESSION_TIMEOUT_MIN=15`.
 
-Sample logins: `investor@demo.local / investor123`, `admin@demo.local / admin123`, plus role switch on the login page (admin, advisor, affiliate, fund_manager, monitor, investor).
+Sample logins: `investor@terminaone.com / investor123`, `admin@terminaone.com / admin123`, plus role switch on the login page (admin, advisor, affiliate, fund_manager, monitor, investor).
 
 ## How it works
 

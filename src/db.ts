@@ -8,7 +8,7 @@ export type Coll =
   | 'funds' | 'opportunities' | 'indications' | 'users' | 'accounts'
   | 'articles' | 'docs' | 'transfers' | 'notices' | 'datafiles';
 
-const LS = 'tsg.db.v3';
+const LS = 'tsg.db.v4';
 const seedMap: Record<Coll, unknown[]> = {
   funds: seed.funds, opportunities: seed.opportunities, indications: seed.indications,
   users: seed.users, accounts: seed.accounts, articles: seed.articles, docs: seed.docs,

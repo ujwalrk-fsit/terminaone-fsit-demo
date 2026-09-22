@@ -15,7 +15,7 @@ type F = z.infer<typeof schema>;
 
 const REM_KEY = 'tsg.remember';
 function remembered(): string {
-  try { return localStorage.getItem(REM_KEY) ?? 'investor@demo.local'; } catch { return 'investor@demo.local'; }
+  try { return localStorage.getItem(REM_KEY) ?? 'investor@terminaone.com'; } catch { return 'investor@terminaone.com'; }
 }
 
 export function BrandPanel() {
@@ -105,7 +105,7 @@ export default function Login() {
             <button className="btn btn-accent btn-block" style={{ height: 44 }}>Log in</button>
           </form>
           <div style={{ fontSize: 13, textAlign: 'center', marginTop: 18, color: 'var(--text-muted)' }}>
-            Sample logins: investor@demo.local / investor123 · admin@demo.local / admin123
+            Log in with: investor@terminaone.com / investor123 · admin@terminaone.com / admin123
           </div>
           <div style={{ fontSize: 13, textAlign: 'center', marginTop: 8 }}>
             Don&apos;t have an account yet?<br /><Link to="/auth/signup" style={{ textDecoration: 'underline', color: 'var(--text-default)' }}>Create one today</Link>

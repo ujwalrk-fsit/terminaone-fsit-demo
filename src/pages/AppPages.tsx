@@ -227,13 +227,13 @@ export function Settings() {
         </div>
       </Card>
       <Card>
-        <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 8, fontSize: 14 }}>Reference data</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Restore all lists, users and rooms to their original sample state.</div>
+        <div style={{ fontWeight: 700, color: 'var(--text-strong)', marginBottom: 8, fontSize: 14 }}>Workspace data</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Restore all lists, users and rooms to their original state.</div>
         <div style={{ marginTop: 8 }}><button className="btn btn-ghost" onClick={async () => {
           if (await confirm({ title: 'Reset all reference data?', body: 'Every list, user and room returns to its original sample state.', confirmLabel: 'Reset data', danger: true })) {
             resetDb(); window.location.reload();
           }
-        }}>Reset demo data</button></div>
+        }}>Reset workspace data</button></div>
       </Card>
     </div>
   );

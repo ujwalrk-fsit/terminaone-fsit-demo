@@ -65,7 +65,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="t-container" style={{ height: 56, display: 'flex', alignItems: 'center', gap: 20 }}>
           <Link to="/" translate="no" style={{ font: '700 17px var(--font-display)', color: 'var(--text-strong)', textDecoration: 'none', letterSpacing: '.04em', display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--brand-blue)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 14 }}>T</span>
-            TerminaOne&nbsp;Demo
+            TERMINAONE
           </Link>
           <div className="hide-md"><SearchBox /></div>
           {!railed && (

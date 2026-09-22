@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useState, type ReactElement } from 'react';
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Shell, Skeleton } from './components/Shell';
 import { logout, touch, sessionTimeoutMin, type RootState } from './store';
@@ -66,10 +66,10 @@ function SessionGuard() {
 }
 
 export default function App() {
-  return (
-    <Shell>
-      <SessionGuard />
-      <Routes>
+  const loc = useLocation();
+  const bare = loc.pathname.startsWith('/auth');
+  const routes = (
+    <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/opportunities" element={<Opportunities />} />
         <Route path="/opportunities/:id" element={<Suspense fallback={<Skeleton />}><OpportunityDetail /></Suspense>} />
@@ -100,6 +100,19 @@ export default function App() {
         <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
         <Route path="*" element={<div>404: route not found. <a href="/" className="underline">Home</a></div>} />
       </Routes>
+  );
+  if (bare) {
+    return (
+      <div className="bare-auth">
+        <SessionGuard />
+        {routes}
+      </div>
+    );
+  }
+  return (
+    <Shell>
+      <SessionGuard />
+      {routes}
     </Shell>
   );
 }

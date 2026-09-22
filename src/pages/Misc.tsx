@@ -147,7 +147,7 @@ export function Forgot() {
           )}
           {step === 1 && (
             <div>
-              <div style={{ fontSize: 13, marginBottom: 10 }}>Enter the 6-digit code sent to <b>{email}</b>. (Reference build code: <b className="tnum">{CODE}</b>)</div>
+              <div style={{ fontSize: 13, marginBottom: 10 }}>Enter the 6-digit code sent to <b>{email}</b>. (Code: <b className="tnum">{CODE}</b>)</div>
               <div className="auth-field"><input placeholder="123456" autoComplete="one-time-code" name="one-time-code" inputMode="numeric" aria-label="Verification code" value={code} onChange={(e) => setCode(e.target.value)} /></div>
               <div className="auth-field">
                 <input type={show ? 'text' : 'password'} placeholder="New password (min 6)" autoComplete="new-password" name="new-password" aria-label="New password" value={pw} onChange={(e) => setPw(e.target.value)} style={{ paddingRight: 40 }} />
